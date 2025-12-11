@@ -1,6 +1,7 @@
 #include<stdio.h>
 int main(){
     printf("Hello world!\n");
+    printf("Hello Linux!\n");
     return 0;
     //RECORD CHANGES HAPPENED LATE NIGHT
 }
