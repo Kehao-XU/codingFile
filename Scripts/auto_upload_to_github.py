@@ -30,7 +30,7 @@ def main():
         os.makedirs(log_folder)
         
     # 设置日志文件路径
-    log_file=os.path.join(log_folder,"auto_download_log.txt")
+    log_file=os.path.join(log_folder,"auto_upload_log.txt")
     
     # 记录开始时间
     now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
