@@ -22,11 +22,11 @@
 
 ### 手动运行脚本
 
-#### 批处理脚本
+#### 批处理脚本（还未更新）
 1. 双击运行 `auto_upload_to_github.bat` 文件
 2. 或者在命令行中执行：`auto_upload_to_github.bat`
 
-#### Python脚本
+#### Python脚本（最新版）
 1. 确保您已经安装了Python
 2. 在命令行中执行：`python auto_upload_to_github.py`
 
@@ -72,7 +72,7 @@
 
 ## 日志记录
 
-两个脚本都会在项目目录下生成一个日志文件 `auto_upload_log.txt`，记录每次运行的详细信息，包括：
+两个脚本都会在您的本地目录下生成一个日志文件 `auto_upload_log.txt`，记录每次运行的详细信息，包括：
 - 运行时间
 - 各个步骤的执行结果
 - 任何错误信息
