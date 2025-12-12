@@ -54,7 +54,10 @@
 5. 设置操作：
    - 选择"启动程序"，然后点击"下一步"
    - 点击"浏览"，找到您要使用的脚本文件（.bat或.py）
-   - 如果选择Python脚本，需要在"程序/脚本"中输入Python的完整路径，在"添加参数"中输入脚本的完整路径
+   - 如果选择Python脚本，需要在"程序/脚本"中输入Python可执行文件的完整路径，在"添加参数"中输入脚本的完整路径
+   - **示例**：
+     - 程序/脚本：`C:\Users\29606\AppData\Local\Programs\Python\Python314\python.exe`
+     - 添加参数：`C:\Users\29606\codingFile\auto_upload_to_github.py`
    - 点击"下一步"
 
 6. 完成设置：

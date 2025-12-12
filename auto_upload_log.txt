@@ -61,4 +61,34 @@ no changes added to commit (use "git add" and/or "git commit -a")
 
 
 上传完成！2025-12-12 10:30:33
+--------------------------------------------------开始自动上传到GitHub... 2025-12-12 10:32:29
+
+1. 检查Git状态...
+Git状态检查成功：
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   auto_upload_log.txt
+	modified:   test.cpp
+
+no changes added to commit (use "git add" and/or "git commit -a")
+
+
+2. 添加所有更改的文件到暂存区...
+文件添加成功
+
+3. 提交更改...
+提交成功：
+[main c66e680] 自动提交 - 2025-12-12 10:32:29
+ 2 files changed, 35 insertions(+)
+
+
+4. 推送到GitHub...
+推送成功：
+
+
+上传完成！2025-12-12 10:32:33
 --------------------------------------------------
