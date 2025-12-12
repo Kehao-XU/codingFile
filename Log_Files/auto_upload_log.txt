@@ -132,7 +132,7 @@ no changes added to commit (use "git add" and/or "git commit -a")
 
 
 上传完成！2025-12-12 12:33:40
---------------------------------------------------开始自动上传到GitHub... 2025-12-12 12:54:17
+--------------------------------------------------开始自动上传到GitHub... 2025-12-12 12:54:15
 
 1. 检查Git状态...
 Git状态检查成功：
@@ -142,7 +142,7 @@ Your branch is up to date with 'origin/main'.
 Changes not staged for commit:
   (use "git add <file>..." to update what will be committed)
   (use "git restore <file>..." to discard changes in working directory)
-	modified:   Log_Files/auto_upload_log.txt
+	modified:   Log_Files/auto_update_log.txt
 	modified:   test.cpp
 
 no changes added to commit (use "git add" and/or "git commit -a")
