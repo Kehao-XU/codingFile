@@ -162,6 +162,7 @@ no changes added to commit (use "git add" and/or "git commit -a")
 
 
 上传完成！2025-12-12 12:54:21
+<<<<<<< Updated upstream
 --------------------------------------------------开始自动上传到GitHub... 2025-12-12 13:10:31
 
 1. 检查Git状态...
@@ -193,6 +194,9 @@ no changes added to commit (use "git add" and/or "git commit -a")
 
 上传完成！2025-12-12 13:10:35
 --------------------------------------------------开始自动上传到GitHub... 2025-12-12 13:12:25
+=======
+--------------------------------------------------开始自动上传到GitHub... 2025-12-12 12:59:26
+>>>>>>> Stashed changes
 
 1. 检查Git状态...
 Git状态检查成功：
@@ -200,9 +204,24 @@ On branch main
 Your branch is up to date with 'origin/main'.
 
 Changes not staged for commit:
+<<<<<<< Updated upstream
   (use "git add <file>..." to update what will be committed)
   (use "git restore <file>..." to discard changes in working directory)
 	modified:   Log_Files/auto_upload_log.txt
+=======
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   Log_Files/auto_update_log.txt
+	modified:   Log_Files/auto_upload_log.txt
+	deleted:    Scripts/README_AUTO_SCRIPTS.md
+	deleted:    Scripts/auto_update_git.py
+	deleted:    Scripts/auto_upload_to_github.bat
+	deleted:    Scripts/auto_upload_to_github.py
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	WindowsScripts/
+>>>>>>> Stashed changes
 
 no changes added to commit (use "git add" and/or "git commit -a")
 
@@ -212,13 +231,26 @@ no changes added to commit (use "git add" and/or "git commit -a")
 
 3. 提交更改...
 提交成功：
+<<<<<<< Updated upstream
 [main 524ad30] 自动提交 - 2025-12-12 13:12:25
  1 file changed, 30 insertions(+)
+=======
+[main 66a8021] 自动提交 - 2025-12-12 12:59:26
+ 6 files changed, 51 insertions(+)
+ rename {Scripts => WindowsScripts}/README_AUTO_SCRIPTS.md (100%)
+ rename {Scripts => WindowsScripts}/auto_update_git.py (100%)
+ rename {Scripts => WindowsScripts}/auto_upload_to_github.bat (100%)
+ rename {Scripts => WindowsScripts}/auto_upload_to_github.py (100%)
+>>>>>>> Stashed changes
 
 
 4. 推送到GitHub...
 推送成功：
 
 
+<<<<<<< Updated upstream
 上传完成！2025-12-12 13:12:29
+=======
+上传完成！2025-12-12 12:59:30
+>>>>>>> Stashed changes
 --------------------------------------------------
