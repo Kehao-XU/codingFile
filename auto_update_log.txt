@@ -1,4 +1,4 @@
-开始自动更新Git... 2025-12-12 11:39:00
+开始自动更新Git... 2025-12-12 11:32:14
 
 1. 检查Git状态...
 Git状态检查成功：
@@ -6,16 +6,13 @@ On branch main
 Your branch is up to date with 'origin/main'.
 
 Changes not staged for commit:
-  (use "git add/rm <file>..." to update what will be committed)
+  (use "git add <file>..." to update what will be committed)
   (use "git restore <file>..." to discard changes in working directory)
-	deleted:    Log_Files/auto_download_log.txt
-	deleted:    Log_Files/auto_upload_log.txt
-	modified:   auto_download_log.py
+	modified:   auto_upload_log.txt
 
 Untracked files:
   (use "git add <file>..." to include in what will be committed)
-	auto_download_log.txt
-	auto_upload_log.txt
+	auto_download_log.py
 
 no changes added to commit (use "git add" and/or "git commit -a")
 
@@ -23,5 +20,5 @@ no changes added to commit (use "git add" and/or "git commit -a")
 2. 检查仓库同步状态...
 仓库已经与GitHub同步，无需更新
 
-更新完成！2025-12-12 11:39:00
+更新完成！2025-12-12 11:32:14
 --------------------------------------------------
