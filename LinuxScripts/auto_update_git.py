@@ -77,28 +77,68 @@ def main():
         if not is_branch_up_to_date or has_remote_changes:
             log_entries.append("仓库未与GitHub完全同步，正在更新...")
             
+            # 检查并处理可能导致冲突的未跟踪文件
+            log_entries.append("\n3. 检查可能的文件冲突...")
+            untracked_conflict_files = []
+            
+            # 1. 获取未跟踪文件列表
+            code, untracked_files, _ = run_git_command("git ls-files --others --exclude-standard", project_dir)
+            if code == 0 and untracked_files.strip():
+                # 2. 获取远程仓库将要更新的文件列表
+                code, remote_changes, _ = run_git_command("git diff --name-only origin/main main", project_dir)
+                
+                if code == 0 and remote_changes.strip():
+                    untracked_files_list = [f.strip() for f in untracked_files.split('\n') if f.strip()]
+                    remote_changes_list = [f.strip() for f in remote_changes.split('\n') if f.strip()]
+                    
+                    # 3. 找出可能冲突的文件（未跟踪但远程有更新的文件）
+                    untracked_conflict_files = list(set(untracked_files_list) & set(remote_changes_list))
+                    
+                    if untracked_conflict_files:
+                        log_entries.append(f"发现可能导致冲突的未跟踪文件：{', '.join(untracked_conflict_files)}")
+                        
+                        # 4. 处理冲突文件（主要针对日志文件）
+                        for file_path in untracked_conflict_files:
+                            full_path = os.path.join(project_dir, file_path)
+                            if "Log_Files/" in file_path and os.path.exists(full_path):
+                                log_entries.append(f"备份并删除可能冲突的日志文件：{file_path}")
+                                # 创建备份
+                                backup_path = f"{full_path}.bak"
+                                if os.path.exists(full_path):
+                                    os.rename(full_path, backup_path)
+                                # 删除原文件
+                                if os.path.exists(full_path):
+                                    os.remove(full_path)
+                            else:
+                                log_entries.append(f"跳过非日志文件的冲突处理：{file_path}")
+            
             # 如果有本地修改，尝试stash保存
+            has_local_changes_after_cleanup = False
             if has_local_changes:
-                log_entries.append("\n3. 保存本地修改...")
-                code, stash_stdout, stash_stderr = run_git_command("git stash", project_dir)
-                if code == 0:
-                    log_entries.append("本地修改已保存：")
-                    log_entries.append(stash_stdout)
-                else:
-                    log_entries.append("保存本地修改失败：")
-                    log_entries.append(stash_stderr)
-                    return code, stash_stdout, stash_stderr
+                # 重新检查是否还有本地修改（可能已通过删除冲突文件解决）
+                code, new_status, _ = run_git_command("git status", project_dir)
+                if "Changes not staged for commit:" in new_status or "Untracked files:" in new_status:
+                    has_local_changes_after_cleanup = True
+                    log_entries.append("\n4. 保存本地修改...")
+                    code, stash_stdout, stash_stderr = run_git_command("git stash", project_dir)
+                    if code == 0:
+                        log_entries.append("本地修改已保存：")
+                        log_entries.append(stash_stdout)
+                    else:
+                        log_entries.append("保存本地修改失败：")
+                        log_entries.append(stash_stderr)
+                        return code, stash_stdout, stash_stderr
             
             # 执行git pull命令更新仓库
-            log_entries.append("\n4. 执行更新操作...")
+            log_entries.append("\n5. 执行更新操作...")
             code, pull_stdout, pull_stderr = run_git_command("git pull", project_dir)
             if code == 0:
                 log_entries.append("仓库更新成功：")
                 log_entries.append(pull_stdout)
                 
                 # 如果有保存的本地修改，尝试恢复
-                if has_local_changes:
-                    log_entries.append("\n5. 恢复本地修改...")
+                if has_local_changes_after_cleanup:
+                    log_entries.append("\n6. 恢复本地修改...")
                     code, pop_stdout, pop_stderr = run_git_command("git stash pop", project_dir)
                     if code == 0:
                         log_entries.append("本地修改已恢复：")
@@ -112,7 +152,7 @@ def main():
                 log_entries.append(pull_stderr)
                 
                 # 如果有保存的本地修改，恢复它们
-                if has_local_changes:
+                if has_local_changes_after_cleanup:
                     run_git_command("git stash pop", project_dir)
         else:
             log_entries.append("仓库已经与GitHub完全同步，无需更新")
