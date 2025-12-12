@@ -25,3 +25,45 @@ no changes added to commit (use "git add" and/or "git commit -a")
 
 更新完成！2025-12-12 11:39:00
 --------------------------------------------------
+开始自动上传到GitHub... 2025-12-12 11:43:44
+
+1. 检查Git状态...
+Git状态检查成功：
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   Log_Files/auto_download_log.txt
+	deleted:    Log_Files/auto_upload_log.txt
+	deleted:    auto_download_log.py
+	modified:   auto_upload_to_github.py
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	auto_update_git.py
+	auto_update_log.txt
+	auto_upload_log.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+
+
+2. 添加所有更改的文件到暂存区...
+文件添加成功
+
+3. 提交更改...
+提交成功：
+[main d3eaa9f] 自动提交 - 2025-12-12 11:43:44
+ 5 files changed, 50 insertions(+), 7 deletions(-)
+ rename auto_download_log.py => auto_update_git.py (89%)
+ create mode 100644 auto_update_log.txt
+ rename Log_Files/auto_upload_log.txt => auto_upload_log.txt (100%)
+
+
+4. 推送到GitHub...
+推送成功：
+
+
+上传完成！2025-12-12 11:43:48
+--------------------------------------------------
