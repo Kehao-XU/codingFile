@@ -11,7 +11,9 @@ def run_git_command(command, cwd):
             cwd=cwd,
             shell=True,
             capture_output=True,
-            text=True
+            text=True,
+            encoding='utf-8',
+            errors='replace'  # 处理编码问题
         )
         return result.returncode, result.stdout, result.stderr
     except Exception as e:
