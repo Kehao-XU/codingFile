@@ -22,7 +22,7 @@ def run_git_command(command, cwd):
 def main():
     # 设置项目目录
     project_dir = r"C:\Users\29606\codingFile"
-    log_file = os.path.join(project_dir, "auto_upload_log.txt")
+    log_file = os.path.join(project_dir, r"\Log_Files\auto_upload_log.txt")
     
     # 记录开始时间
     now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
