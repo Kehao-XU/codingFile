@@ -46,23 +46,76 @@ def main():
         else:
             log_entries.append("Git状态检查失败：")
             log_entries.append(stderr)
+            return code, stdout, stderr
         
-        #2.如果git已经和github上同步，则不更新仓库，如果没有同步，则更新仓库
+        #2.检查仓库同步状态
         log_entries.append("\n2. 检查仓库同步状态...")
         
-        # 判断是否已同步
-        if "Your branch is up to date with" in stdout:
-            log_entries.append("仓库已经与GitHub同步，无需更新")
+        # 检查是否有未提交的修改或未跟踪的文件
+        has_local_changes = False
+        if "Changes not staged for commit:" in stdout or "Untracked files:" in stdout:
+            has_local_changes = True
+            log_entries.append("发现本地有未提交的修改或未跟踪的文件")
+        
+        # 检查本地分支是否与远程分支同步
+        is_branch_up_to_date = "Your branch is up to date with" in stdout
+        
+        # 检查是否有远程更新
+        code, fetch_stdout, fetch_stderr = run_git_command("git fetch", project_dir)
+        if code != 0:
+            log_entries.append("获取远程更新失败：")
+            log_entries.append(fetch_stderr)
         else:
-            log_entries.append("仓库未与GitHub同步，正在更新...")
+            # 检查本地分支与远程分支的差异
+            code, diff_stdout, diff_stderr = run_git_command("git diff origin/main main", project_dir)
+            if code == 0 and diff_stdout.strip():
+                has_remote_changes = True
+            else:
+                has_remote_changes = False
+        
+        # 根据不同情况决定是否更新
+        if not is_branch_up_to_date or has_remote_changes:
+            log_entries.append("仓库未与GitHub完全同步，正在更新...")
+            
+            # 如果有本地修改，尝试stash保存
+            if has_local_changes:
+                log_entries.append("\n3. 保存本地修改...")
+                code, stash_stdout, stash_stderr = run_git_command("git stash", project_dir)
+                if code == 0:
+                    log_entries.append("本地修改已保存：")
+                    log_entries.append(stash_stdout)
+                else:
+                    log_entries.append("保存本地修改失败：")
+                    log_entries.append(stash_stderr)
+                    return code, stash_stdout, stash_stderr
+            
             # 执行git pull命令更新仓库
-            code, stdout, stderr = run_git_command("git pull", project_dir)
+            log_entries.append("\n4. 执行更新操作...")
+            code, pull_stdout, pull_stderr = run_git_command("git pull", project_dir)
             if code == 0:
                 log_entries.append("仓库更新成功：")
-                log_entries.append(stdout)
+                log_entries.append(pull_stdout)
+                
+                # 如果有保存的本地修改，尝试恢复
+                if has_local_changes:
+                    log_entries.append("\n5. 恢复本地修改...")
+                    code, pop_stdout, pop_stderr = run_git_command("git stash pop", project_dir)
+                    if code == 0:
+                        log_entries.append("本地修改已恢复：")
+                        log_entries.append(pop_stdout)
+                    else:
+                        log_entries.append("恢复本地修改失败（可能有冲突）：")
+                        log_entries.append(pop_stderr)
+                        log_entries.append("请手动解决冲突：git stash list 查看保存的修改，git stash apply 应用修改")
             else:
                 log_entries.append("仓库更新失败：")
-                log_entries.append(stderr)
+                log_entries.append(pull_stderr)
+                
+                # 如果有保存的本地修改，恢复它们
+                if has_local_changes:
+                    run_git_command("git stash pop", project_dir)
+        else:
+            log_entries.append("仓库已经与GitHub完全同步，无需更新")
     
     except Exception as e:
         log_entries.append(f"\n发生未知错误：{str(e)}")
