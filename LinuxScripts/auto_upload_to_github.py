@@ -21,7 +21,7 @@ def run_git_command(command, cwd):
 
 def main():
     # 设置项目目录
-    project_dir = r"C:\Users\29606\codingFile"
+    project_dir = r"/home/justinian/codingFile"
     # 指定日志文件夹
     log_folder = os.path.join(project_dir, "Log_Files")
     
