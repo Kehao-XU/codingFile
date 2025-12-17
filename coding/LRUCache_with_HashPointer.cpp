@@ -31,14 +31,13 @@ typedef struct LRUCache {
     Node* tail;         // 双向链表尾节点（哨兵）
     struct Node** hash; // 哈希表，用于快速查找
 } LRUCache;
-LRUCache *cache=NULL;
 
-int hash(int key){
-    capacity=cache->capacity;
+int hash(int key,LRUCache* cache){
+    int capacity=cache->capacity;
     return abs(key)%(2*capacity);
 }
 
-Node* createNode(int key,int value){
+Node* createNode(int key,int value,LRUCache* cache){
     Node *node=(Node*)malloc(sizeof(Node));
     node->key=key;
     node->value=value;
@@ -54,28 +53,54 @@ Node* createNode(int key,int value){
 
 LRUCache* createCache(){
     LRUCache *cache=(LRUCache*)malloc(sizeof(LRUCache)) ;
+    if(!cache){
+        printf("Memory allocation failed!\n");
+        return NULL;
+    }
+
     printf("Enter the capacity of LRUCache.\n");
     scanf("%d",&cache->capacity);
 
     cache->size=0;
+
     cache->head=(Node*)malloc(sizeof(Node));
+    if(!cache->head){
+        printf("Memory allocation failed!\n");
+        free(cache);
+        return NULL;
+    }
+
     cache->tail=(Node*)malloc(sizeof(Node));
+    if(!cache->tail){
+        printf("Memory allocation failed!\n");
+        free(cache->head);
+        free(cache);
+        return NULL;
+    }
     
-    cache->head->key=cache->tail->key-1;
+    cache->head->key=cache->tail->key=-1;
     cache->head->value=cache->tail->value=-1;
     cache->head->next=cache->tail;
     cache->tail->prev=cache->head;
-    cache->head->prev=cache->tail->next=NULL;
+    cache->head->prev=NULL;
+    cache->tail->next=NULL;
     
     cache->hash=(Node**)calloc(2*cache->capacity,sizeof(Node*));
+    if(!cache->hash){
+        printf("Memory allocation failed!\n");
+        free(cache->head);
+        free(cache->tail);
+        free(cache);
+        return NULL;
+    }
 
     return cache;
 }
 
-int get(int key){
-    if(!cache->hash[hash(key)])return -1;
+int get(int key,LRUCache* cache){
+    if(!cache->hash[hash(key,cache)])return -1;
 
-    Node *p=*cache->hash[hash(key)],Head=cache->head;
+    Node *p=*cache->hash[hash(key,cache)],Head=cache->head;
     p->prev->next=p->next;
     p->next->prev=p->prev;
     p->next=Head->next;
@@ -86,8 +111,8 @@ int get(int key){
     return p->value;
 }
 
-void put(int key, int value){
-    int help=get(key);
+void put(int key, int value,LRUCache* cache){
+    int help=get(key,cache);
 
     if(help!=-1){
         cache->head->next->value=value;
@@ -96,7 +121,7 @@ void put(int key, int value){
     }
 
     if(cache->size<cache->capacity){
-        createNode(key,value);
+        createNode(key,value,cache);
         printf("\nA new node created!\n");
         return;
     }
@@ -106,11 +131,11 @@ void put(int key, int value){
 
         SecLeast->next=Tail;
         Tail->prev=SecLeast;
-        cache->hash[hash(LeastUsed->key)]=NULL;
+        cache->hash[hash(LeastUsed->key,cache)]=NULL;
         free(LeastUsed);
         cache->size--;
         
-        createNode(key,value);
+        createNode(key,value,cache);
         printf("\nA new node created!\n");
         return;
     }
@@ -125,7 +150,7 @@ void PrintCache(LRUCache *cache){
     }
 
     while(temp->next){
-        printf("No.%d used:key->%d\tvalue->%d\n",time,temp->key,time->value);
+        printf("No.%d used:key->%d\tvalue->%d\n",time,temp->key,temp->value);
         time++;
         temp=temp->next;
     }
