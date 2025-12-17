@@ -6,8 +6,116 @@
 #include<stdio.h>
 #include<malloc.h>
 #include"SimpleNode.h"
+#include<math.h>
 Node* addNumber(Node *num1,Node *num2){
-    dummy(0);
+    Node* add=(Node*)malloc(sizeof(Node));
+    if(!add){
+        printf("Memory allocation failed!\n");
+        return NULL;
+    }
+    add->value=-1;
+    add->next=NULL;
+
+    Node *tail=NULL,*current1=num1->next,*current2=num2->next;
+    Node *p;
+    int upgrade=0;
+
+    while(current1&&current2){
+        p=(Node*)malloc(sizeof(Node));
+        if(!p){
+            printf("Memory allocation failed!\n");
+            freeList(add);
+            return NULL;
+        }
+
+        p->value=current1->value+current2->value+upgrade;
+        upgrade=0;
+        if(p->value>10)upgrade=1;
+        p->value%=10;
+        p->next=NULL;
+
+        if(!add->next){
+            add->next=tail=p;
+        }
+        else{
+            tail->next=p;
+            tail=tail->next;
+        }
+        current1=current1->next;
+        current2=current2->next;
+    }
+
+    if(current1==NULL&&current2==NULL&&upgrade){
+        p=(Node*)malloc(sizeof(Node));
+        if(!p){
+            printf("Memory allocation failed!\n");
+            freeList(add);
+            return NULL;
+        }
+
+        p->value=1;
+        p->next=NULL;
+        tail->next=p;
+        tail=tail->next;
+
+        return add;
+    }
+
+    while(current1){
+        p=(Node*)malloc(sizeof(Node));
+        if(!p){
+            printf("Memory allocation failed!\n");
+            freeList(add);
+            return NULL;
+        }
+
+        p->value=current1->value+upgrade;
+        upgrade=0;
+        if(p->value==10){
+            p->value=0;
+            upgrade=1;
+        }
+        p->next=NULL;
+
+        tail->next=p;
+        tail=tail->next;
+        current1=current1->next;
+    }
+
+    while(current2){
+        p=(Node*)malloc(sizeof(Node));
+        if(!p){
+            printf("Memory allocation failed!\n");
+            freeList(add);
+            return NULL;
+        }
+
+        p->value=current2->value+upgrade;
+        upgrade=0;
+        if(p->value==10){
+            p->value=0;
+            upgrade=1;
+        }
+        p->next=NULL;
+
+        tail->next=p;
+        tail=tail->next;
+        current2=current2->next;
+    }
+
+    return add;
+}
+
+void printNum(Node *num){
+    Node *temp=num;
+    int number=0,i=0;
+    while(num){
+        num=num->next;
+        number+=temp->value*pow(10,i);
+        temp=num;
+        i++;
+    }
+    printf("%d\n",number);
 }
 
 int main(){
@@ -24,7 +132,7 @@ int main(){
 
     printf("Adding your two numbers....\nIt's ");
     Node *add=addNumber(num1,num2);
-    printNum(add);
+    printNum(add->next);
 
     freeList(num1);
     freeList(num2);
