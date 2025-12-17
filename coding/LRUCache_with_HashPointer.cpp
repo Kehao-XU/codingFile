@@ -37,18 +37,23 @@ int hash(int key,LRUCache* cache){
     return abs(key)%(2*capacity);
 }
 
-Node* createNode(int key,int value,LRUCache* cache){
+void createNode(int key,int value,LRUCache* cache){
     Node *node=(Node*)malloc(sizeof(Node));
-    node->key=key;
+    if(!node){
+        printf("Memory allocation failed!\n");
+        return;
+    }
+
+    node->key=hash(key,cache);
     node->value=value;
     node->next=cache->head->next;
     node->prev=cache->head;
     cache->head->next=node;
     node->next->prev=node;
-    cache->hash[hash(key)]=node;
-    #增加冲突解决机制
+    cache->hash[node->key]=node;
     cache->size++;
-    return node;
+
+    return;
 }
 
 LRUCache* createCache(){
@@ -100,7 +105,7 @@ LRUCache* createCache(){
 int get(int key,LRUCache* cache){
     if(!cache->hash[hash(key,cache)])return -1;
 
-    Node *p=*cache->hash[hash(key,cache)],Head=cache->head;
+    Node *p=cache->hash[hash(key,cache)],*Head=cache->head;
     p->prev->next=p->next;
     p->next->prev=p->prev;
     p->next=Head->next;
@@ -116,7 +121,7 @@ void put(int key, int value,LRUCache* cache){
 
     if(help!=-1){
         cache->head->next->value=value;
-        printf("\nPut value success!\n");
+        printf("\nPut in value success!\n");
         return;
     }
 
@@ -150,7 +155,7 @@ void PrintCache(LRUCache *cache){
     }
 
     while(temp->next){
-        printf("No.%d used:key->%d\tvalue->%d\n",time,temp->key,temp->value);
+        printf("No.%d used:key->%d\tvalue->%d\n",time+1,temp->key,temp->value);
         time++;
         temp=temp->next;
     }
@@ -158,10 +163,6 @@ void PrintCache(LRUCache *cache){
 }
 
 void freeCache(LRUCache *cache){
-    for(int i=0;i<2*cache->capacity;i++){
-        free(cache->hash[i]);
-    }
-
     Node *temp=cache->head,*Head=cache->head;
     while(Head){
         Head=Head->next;
@@ -169,11 +170,12 @@ void freeCache(LRUCache *cache){
         temp=Head;
     }
 
+    free(cache->hash);
     free(cache);
 }
 
 int main(){
-    cache=createCache();
+    LRUCache* cache=createCache();
 
     int choice=0,key=0,value=0;
     do{
@@ -183,13 +185,13 @@ int main(){
             case 1:{
                 printf("\n\nEnter the key please.\n");
                 scanf("%d",&key);
-                printf("Your key stores a value of %d.\n",get(key));
+                printf("Your key stores a value of %d.\n",get(key,cache));
                 break;
             }
             case 2:{
                 printf("\n\nEnter your key and value.\n");
                 scanf("%d%d",&key,&value);
-                put(key,value);
+                put(key,value,cache);
                 break;
             }
             case 3:{
