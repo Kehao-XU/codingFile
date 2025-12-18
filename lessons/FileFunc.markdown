@@ -58,7 +58,43 @@ fputs()的作用是将由参数所指的字符串输出到文件。
 void rewind(FILE *fp)
 ```
 其作用是使文件当前位置重新回到文件之首。
+
+----
 ```cpp
 fseek(FILE *fp,long offset,int ptrname)
 ```
 这个函数中ptrname表示定位基准，只允许0、1、2。其中，0代表以文件首为基准，1代表以当前位置为基准，2代表以文件尾为基准。
+
+例如：
+```cpp
+fseek(fp,40L,SEEK_SET);
+fseek(fp,20L,SEEK_CUR);
+fseek(fp,-30L,SEEK_END);
+```
+分别表示将文件的当前位置定于离文件头40B处、将文件的当前位置定于往文件尾方向离开当前位置20B处、将文件的当前位置定于文件尾后退30B处。
+
+这个函数一般用于二进制文件的随机输入或输出，是因为二进制文件的数据表示形式与数据在内存中的表示形式相同，各种类型的数据表示都有确定的字节数，而正文文件的数据表示形式与数据在内存中的表示形式不同，它们在输入/输出时，经过内外表示形式的转换，同类型的数值数据在文件中表示的字节数可能不同，不能由字节数计算数值的个数。
+
+---
+```cpp
+long ftell(FILE *fp)
+```
+利用这个函数可以方便的确定文件的当前位置。
+```cpp
+fseek(fp,0L,SEEK_END);
+long len=ftell(fp);
+```
+这样就可以知道文件所含字节数。
+
+## fread()&fwrite()
+```cpp
+int fread(void *ptr,int size,int count,FILE *rfp);
+int fwrite(void *ptr,int size,int count,FILE *wfp);
+```
+这两个函数可以用于成批输入和成批输出。其中，ptr是数组首元素指针，对fread()来说，是输入数据的存储开始地址；对fwrite()来说，是输出数据的开始地址。size是输入/输出的数据块的字节数，count是进行输入/输出的数据块的个数。fp为文件指针。
+
+## feof
+```cpp
+feof(fp)
+```
+可以用来判断文件是否结束，**特别**用于二进制文件，因为正文文件不会有ASCII码等于-1，所以可以用EOF来判断是否结束。
