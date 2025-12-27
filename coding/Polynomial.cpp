@@ -28,7 +28,7 @@ struct Term {
 typedef struct Term* Polynomial;
 
 Polynomial create_polynomial(){
-    Polynomial Poly=(Term*)malloc(sizof(Term)),Tail,p;
+    Polynomial Poly=(Term*)malloc(sizeof(Term)),Tail,p;
     if(!Poly){
         printf("Memory allocation failed!\n");
         return NULL;
@@ -37,6 +37,8 @@ Polynomial create_polynomial(){
     Poly->coef=-1;
     Poly->next=NULL;
     Tail=Poly;
+
+    printf("\nPlease enter the polynomial.\ne.g. \"4.5 2\"stands for 4.5x^2\n");
 
     int exponent;
     float coefficient;
@@ -54,9 +56,21 @@ Polynomial create_polynomial(){
         }
         else break;
     }
-    while(True);
+    while(true);
+
+    printf("---------------\n");
 
     return Poly;
+}
+
+void destroy_polynomial(Polynomial p){
+    Polynomial temp;
+    while(p){
+        temp=p;
+        p=p->next;
+        free(temp);
+    }
+    return;
 }
 
 Polynomial add_polynomial(Polynomial p1, Polynomial p2){
@@ -73,10 +87,61 @@ Polynomial add_polynomial(Polynomial p1, Polynomial p2){
     Polynomial cur1=p1->next,cur2=p2->next;
     Polynomial tail=SumPoly,p;
     while(cur1&&cur2){
-        switch(cur1->exp-cur2->exp){
-            case >0:{}
-            case <0:{}
-            case 0:{}
+        if(cur1->exp>cur2->exp){
+            p=(Term*)malloc(sizeof(Term));
+            if(!p){
+                printf("Memory allocation failed!\n");
+                destroy_polynomial(SumPoly);
+                return NULL;
+            }
+
+            p->coef=cur1->coef;
+            p->exp=cur1->exp;
+            p->next=NULL;
+
+            cur1=cur1->next;
+            tail->next=p;
+            tail=tail->next;
+
+            continue;
+        }
+        if(cur1->exp<cur2->exp){
+            p=(Term*)malloc(sizeof(Term));
+
+            if(!p){
+                printf("Memory allocation failed!\n");
+                destroy_polynomial(SumPoly);
+                return NULL;
+            }
+
+            p->coef=cur2->coef;
+            p->exp=cur2->exp;
+            p->next=NULL;
+
+            cur2=cur2->next;
+            tail->next=p;
+            tail=tail->next;
+
+            continue;
+        }
+        if(cur1->exp==cur2->exp){
+            p=(Term*)malloc(sizeof(Term));
+            if(!p){
+                printf("Memory allocation failed!\n");
+                destroy_polynomial(SumPoly);
+                return NULL;
+            }
+
+            p->coef=cur1->coef+cur2->coef;
+            p->exp=cur1->exp;
+            p->next=NULL;
+
+            cur1=cur1->next;
+            cur2=cur2->next;
+            tail->next=p;
+            tail=tail->next;
+
+            continue;
         }
     }
     
@@ -117,8 +182,93 @@ Polynomial add_polynomial(Polynomial p1, Polynomial p2){
     return SumPoly;
 }
 
+Polynomial findPoly(Polynomial p, int NewTermExp, Polynomial* prev){
+    Polynomial temp = p;
+    Polynomial cur = p->next;
+    
+    while(cur){
+        if(cur->exp > NewTermExp){
+            cur = cur->next;
+            temp = temp->next;
+            continue;
+        }
+        if(cur->exp == NewTermExp){
+            // 找到匹配的指数，返回该节点
+            return cur;
+        }
+        if(cur->exp < NewTermExp){
+            // 找到了插入位置，返回NULL并设置prev
+            break;
+        }
+    }
+    
+    // 设置prev为要插入位置的前一个节点
+    *prev = temp;
+    return NULL;
+}
+
 Polynomial multiply_polynomial(Polynomial p1, Polynomial p2){
-    dummy(0);
+    Polynomial multiPoly=(Polynomial)malloc(sizeof(Term));
+    if(!multiPoly){
+        printf("Memory allocation failed!\n");
+        return NULL;
+    }
+
+    multiPoly->coef=-1;
+    multiPoly->exp=-1;
+    multiPoly->next=NULL;
+
+    Polynomial cur1=p1->next,cur2=p2->next,p;
+    if(!cur1||!cur2){
+        p=(Polynomial)malloc(sizeof(Term));
+        if(!p){
+            printf("Memory allocation failed!\n");
+            free(multiPoly);
+            return NULL;
+        }
+
+        p->coef=0;
+        p->exp=0;
+        p->next=NULL;
+        multiPoly->next=p;
+
+        return multiPoly;
+    }
+
+    Polynomial target=NULL, prev;
+    while(cur1){
+        while(cur2){
+            target=findPoly(multiPoly,cur1->exp+cur2->exp,&prev);
+            if(!target){
+                p=(Polynomial)malloc(sizeof(Term));
+                if(!p){
+                    printf("Memory allocation failed!\n");
+                    destroy_polynomial(multiPoly);
+                    return NULL;
+                }
+
+                p->coef=(cur1->coef)*(cur2->coef);
+                p->exp=cur1->exp+cur2->exp;
+                p->next=NULL;
+
+                // 插入新节点到prev之后
+                Polynomial temp = prev->next;
+                prev->next = p;
+                p->next = temp;
+
+                cur2=cur2->next;
+            }
+            else{
+                // 找到匹配的指数，直接累加系数
+                target->coef+=(cur1->coef)*(cur2->coef);
+                cur2=cur2->next;
+            }
+        }
+        cur2=p2->next;
+        cur1=cur1->next;
+    }
+
+    return multiPoly;
 }
 
 void print_polynomial(Polynomial p){
@@ -128,7 +278,8 @@ void print_polynomial(Polynomial p){
         return;
     }
 
-    while(!current->next){
+    printf("\n");
+    while(current->next){
         printf("%.2fx^%d+",current->coef,current->exp);
         current=current->next;
     }
@@ -139,12 +290,20 @@ void print_polynomial(Polynomial p){
     return;
 }
 
-void destroy_polynomial(Polynomial p){
-    Polynomial temp=p;
-    while(!p){
-        p=p->next;
-        free(temp);
-        temp=p;
-    }
-    return;
+int main(){
+    Polynomial Poly1=create_polynomial(),Poly2=create_polynomial();
+    print_polynomial(Poly1);
+    print_polynomial(Poly2);
+
+    Polynomial SumPoly=add_polynomial(Poly1,Poly2);
+    print_polynomial(SumPoly);
+
+    Polynomial multiPoly=multiply_polynomial(Poly1,Poly2);
+    print_polynomial(multiPoly);
+
+    destroy_polynomial(Poly1);
+    destroy_polynomial(Poly2);
+    destroy_polynomial(SumPoly);
+    destroy_polynomial(multiPoly);
+    return 0;
 }
