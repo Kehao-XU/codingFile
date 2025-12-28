@@ -182,6 +182,117 @@ Polynomial add_polynomial(Polynomial p1, Polynomial p2){
     return SumPoly;
 }
 
+Polynomial subtract_polynomial(Polynomial p1, Polynomial p2){
+    Polynomial SubPoly=(Term*)malloc(sizeof(Term));
+    if(!SubPoly){
+        printf("Memory allocation failed!\n");
+        return NULL;
+    }
+
+    SubPoly->coef=-1;
+    SubPoly->exp=-1;
+    SubPoly->next=NULL;
+
+    Polynomial cur1=p1->next,cur2=p2->next;
+    Polynomial tail=SubPoly,p;
+    while(cur1&&cur2){
+        if(cur1->exp>cur2->exp){
+            p=(Term*)malloc(sizeof(Term));
+            if(!p){
+                printf("Memory allocation failed!\n");
+                destroy_polynomial(SubPoly);
+                return NULL;
+            }
+
+            p->coef=cur1->coef;
+            p->exp=cur1->exp;
+            p->next=NULL;
+
+            cur1=cur1->next;
+            tail->next=p;
+            tail=tail->next;
+
+            continue;
+        }
+        if(cur1->exp<cur2->exp){
+            p=(Term*)malloc(sizeof(Term));
+
+            if(!p){
+                printf("Memory allocation failed!\n");
+                destroy_polynomial(SubPoly);
+                return NULL;
+            }
+
+            // 减法操作：p2的项取相反数
+            p->coef=-cur2->coef;
+            p->exp=cur2->exp;
+            p->next=NULL;
+
+            cur2=cur2->next;
+            tail->next=p;
+            tail=tail->next;
+
+            continue;
+        }
+        if(cur1->exp==cur2->exp){
+            p=(Term*)malloc(sizeof(Term));
+            if(!p){
+                printf("Memory allocation failed!\n");
+                destroy_polynomial(SubPoly);
+                return NULL;
+            }
+
+            // 减法操作：p1的系数减去p2的系数
+            p->coef=cur1->coef-cur2->coef;
+            p->exp=cur1->exp;
+            p->next=NULL;
+
+            cur1=cur1->next;
+            cur2=cur2->next;
+            tail->next=p;
+            tail=tail->next;
+
+            continue;
+        }
+    }
+    
+    while(cur1){
+        p=(Term*)malloc(sizeof(Term));
+        if(!p){
+            printf("Memory allocation failed!\n");
+            destroy_polynomial(SubPoly);
+            return NULL;
+        }
+
+        p->coef=cur1->coef;
+        p->exp=cur1->exp;
+        p->next=NULL;
+
+        tail->next=p;
+        tail=tail->next;
+        cur1=cur1->next;
+    }
+
+    while(cur2){
+        p=(Term*)malloc(sizeof(Term));
+        if(!p){
+            printf("Memory allocation failed!\n");
+            destroy_polynomial(SubPoly);
+            return NULL;
+        }
+
+        p->coef=-cur2->coef;
+        p->exp=cur2->exp;
+        p->next=NULL;
+
+        tail->next=p;
+        tail=tail->next;
+        cur2=cur2->next;
+    }
+
+    return SubPoly;
+}
+
 Polynomial findPoly(Polynomial p, int NewTermExp, Polynomial* prev){
     Polynomial temp = p;
     Polynomial cur = p->next;
@@ -271,11 +382,20 @@ Polynomial SimplyMultiply(Polynomial p1, Polynomial p2){
     return multiPoly;
 }
 
-void oxidize_polynomial(Polynomial p,int n){
+void oxidize_polynomial(Polynomial p,int n){    
     Polynomial cur=p->next,temp;
     if(!cur){
-        printf("This is an empty polynomial!\n");
-        return;
+        // 如果多项式为空，直接添加一个指数为n的零项
+        temp=(Polynomial)malloc(sizeof(Term));
+        if(!temp){
+            printf("Memory allocation failed!\n");
+            return;
+        }
+        temp->coef=0;
+        temp->exp=n;
+        temp->next=NULL;
+        p->next=temp;
+        cur=temp;
     }
 
     if(cur->exp<n){
@@ -346,7 +466,8 @@ void oxidize_polynomial(Polynomial p,int n){
 void reduce_polynomial(Polynomial p){
     Polynomial cur=p->next,prev=p;
     while(cur){
-        if(!cur->exp){
+        // 移除系数为0的项（考虑浮点数精度问题）
+        if(cur->coef < 1e-6 && cur->coef > -1e-6){
             prev->next=cur->next;
             free(cur);
             cur=prev->next;
@@ -358,23 +479,34 @@ void reduce_polynomial(Polynomial p){
     }
 }
 
-void preKaratasuba(Polynomial p1,Polynomial p2){
+int prepareKaratsuba(Polynomial p1,Polynomial p2){
     Polynomial cur1=p1->next,cur2=p2->next;
     int length1=0,length2=0;
+    
+    // 计算两个多项式的长度
     while(cur1){
         cur1=cur1->next;
         length1++;
     }
-    cur1=p1->next;
     while(cur2){
         cur2=cur2->next;
         length2++;
     }
-    cur2=p2->next;
-
+    
     int n=(length1>length2?length1:length2);
-    oxidize_polynomial(p1,n);
-    oxidize_polynomial(p2,n);
+    
+    // 找到大于等于n的最小2的幂
+    int powerOfTwo = 1;
+    while(powerOfTwo < n) {
+        powerOfTwo *= 2;
+    }
+    n = powerOfTwo;
+    
+    // 补零操作
+    oxidize_polynomial(p1, n - 1); // 最高指数为n-1，因此多项式有n项
+    oxidize_polynomial(p2, n - 1);
+    
+    return n;
 }
 
 Polynomial KaratsubaMultiply(Polynomial p1,Polynomial p2,int n){
@@ -404,8 +536,9 @@ Polynomial KaratsubaMultiply(Polynomial p1,Polynomial p2,int n){
         return p;
     }
 
+    int half = n / 2;
     Polynomial First1=(Term*)malloc(sizeof(Term)),First0=(Term*)malloc(sizeof(Term)),\
-    Sec1=(Term*)malloc(sizeof(Term)),Sec0=(Term*)malloc(sizeof(Term));
+    Second1=(Term*)malloc(sizeof(Term)),Second0=(Term*)malloc(sizeof(Term));
     if(!First1){
         printf("Memory allocation failed!\n");
         return NULL;
@@ -436,33 +569,37 @@ Polynomial KaratsubaMultiply(Polynomial p1,Polynomial p2,int n){
     Second1->next=NULL;
     Second0->next=NULL;
 
-    for(int i=0,tail=First1;i<(n/2);i++){
+    // 将p1拆分为First1（高次项）和First0（低次项）
+    tail=First1;
+    int i;
+    for(i=0;i<half;i++){
         p=(Polynomial)malloc(sizeof(Term));
         if(!p){
             printf("Memory allocation failed!\n");
             destroy_polynomial(First1);
-            free(First0);
-            free(Second1);
-            free(Second0);
+            destroy_polynomial(First0);
+            destroy_polynomial(Second1);
+            destroy_polynomial(Second0);
             return NULL;
         }
 
         p->coef=cur1->coef;
-        p->exp=cur1->exp-n/2;
+        p->exp=cur1->exp - half;
         p->next=NULL;
         cur1=cur1->next;
         tail->next=p;
         tail=tail->next;
     }
+    
     tail=First0;
-    while(cur1){
+    for(;i<n;i++){
         p=(Polynomial)malloc(sizeof(Term));
         if(!p){
             printf("Memory allocation failed!\n");
             destroy_polynomial(First1);
-            destroy_polynomial(First1);
-            free(Second1);
-            free(Second0);
+            destroy_polynomial(First0);
+            destroy_polynomial(Second1);
+            destroy_polynomial(Second0);
             return NULL;
         }
 
@@ -474,31 +611,34 @@ Polynomial KaratsubaMultiply(Polynomial p1,Polynomial p2,int n){
         tail=tail->next;
     }
 
-    for(int i=0,tail=Second1;i<(n/2);i++){
+    // 将p2拆分为Second1（高次项）和Second0（低次项）
+    tail=Second1;
+    for(i=0;i<half;i++){
         p=(Polynomial)malloc(sizeof(Term));
         if(!p){
             printf("Memory allocation failed!\n");
             destroy_polynomial(First1);
             destroy_polynomial(First0);
             destroy_polynomial(Second1);
-            free(Second0);
+            destroy_polynomial(Second0);
             return NULL;
         }
 
         p->coef=cur2->coef;
-        p->exp=cur2->exp;
+        p->exp=cur2->exp - half;
         p->next=NULL;
         cur2=cur2->next;
         tail->next=p;
         tail=tail->next;
     }
+    
     tail=Second0;
-    while(cur2){
+    for(;i<n;i++){
         p=(Polynomial)malloc(sizeof(Term));
         if(!p){
             printf("Memory allocation failed!\n");
             destroy_polynomial(First1);
-            destroy_polynomial(First1);
+            destroy_polynomial(First0);
             destroy_polynomial(Second1);
             destroy_polynomial(Second0);
             return NULL;
@@ -511,6 +651,55 @@ Polynomial KaratsubaMultiply(Polynomial p1,Polynomial p2,int n){
         tail->next=p;
         tail=tail->next;
     }
+
+    // 计算A1*B1和A0*B0
+    Polynomial multi1=KaratsubaMultiply(First1,Second1,half);
+    Polynomial multi2=KaratsubaMultiply(First0,Second0,half);
+    
+    // 计算(A1+A0)*(B1+B0)
+    Polynomial sumA=add_polynomial(First1,First0);
+    Polynomial sumB=add_polynomial(Second1,Second0);
+    Polynomial midMulti=KaratsubaMultiply(sumA,sumB,half);
+    
+    // 计算(A1+A0)*(B1+B0) - A1*B1
+    Polynomial temp=subtract_polynomial(midMulti,multi1);
+    
+    // 计算(A1+A0)*(B1+B0) - A1*B1 - A0*B0
+    Polynomial mid=subtract_polynomial(temp,multi2);
+    
+    // 调整指数：将A1*B1的结果乘以x^(2*half)
+    cur1=multi1->next;
+    while(cur1){
+        cur1->exp+=2*half;
+        cur1=cur1->next;
+    }
+    
+    // 调整指数：将mid的结果乘以x^half
+    cur2=mid->next;
+    while(cur2){
+        cur2->exp+=half;
+        cur2=cur2->next;
+    }
+    
+    // 组合结果：A1*B1*x^(2*half) + mid*x^half + A0*B0
+    Polynomial MultiPolyHalf=add_polynomial(multi1,mid);
+    Polynomial MultiPoly=add_polynomial(MultiPolyHalf,multi2);
+    
+    // 释放临时内存
+    destroy_polynomial(multi1);
+    destroy_polynomial(multi2);
+    destroy_polynomial(sumA);
+    destroy_polynomial(sumB);
+    destroy_polynomial(midMulti);
+    destroy_polynomial(temp);
+    destroy_polynomial(mid);
+    destroy_polynomial(MultiPolyHalf);
+    destroy_polynomial(First1);
+    destroy_polynomial(First0);
+    destroy_polynomial(Second1);
+    destroy_polynomial(Second0);
+
+    return MultiPoly;
 }
 
 void print_polynomial(Polynomial p){
@@ -540,7 +729,9 @@ int main(){
     Polynomial SumPoly=add_polynomial(Poly1,Poly2);
     print_polynomial(SumPoly);
 
-    Polynomial multiPoly=KaratsubaMultiply(Poly1,Poly2);
+    int n=prepareKaratsuba(Poly1,Poly2);
+    Polynomial multiPoly=KaratsubaMultiply(Poly1,Poly2,n);
+    reduce_polynomial(multiPoly);
     print_polynomial(multiPoly);
 
     destroy_polynomial(Poly1);
