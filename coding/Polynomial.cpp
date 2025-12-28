@@ -207,7 +207,7 @@ Polynomial findPoly(Polynomial p, int NewTermExp, Polynomial* prev){
     return NULL;
 }
 
-Polynomial multiply_polynomial(Polynomial p1, Polynomial p2){
+Polynomial SimplyMultiply(Polynomial p1, Polynomial p2){
     Polynomial multiPoly=(Polynomial)malloc(sizeof(Term));
     if(!multiPoly){
         printf("Memory allocation failed!\n");
@@ -271,6 +271,248 @@ Polynomial multiply_polynomial(Polynomial p1, Polynomial p2){
     return multiPoly;
 }
 
+void oxidize_polynomial(Polynomial p,int n){
+    Polynomial cur=p->next,temp;
+    if(!cur){
+        printf("This is an empty polynomial!\n");
+        return;
+    }
+
+    if(cur->exp<n){
+        temp=(Polynomial)malloc(sizeof(Term));
+        if(!temp){
+            printf("Memory allocation failed!\n");
+            return;
+        }
+
+        temp->coef=0;
+        temp->exp=n;
+        temp->next=cur;
+        p->next=temp;
+        p=p->next;
+
+        while(p->exp-cur->exp>1){
+            temp=(Polynomial)malloc(sizeof(Term));
+            if(!temp){
+                printf("Memory allocation failed!\n");
+                return;
+            }
+
+            temp->coef=0;
+            temp->exp=p->exp-1;
+            temp->next=cur;
+            p->next=temp;
+            p=p->next;
+        }
+    }
+
+    while(cur->next){
+        if(cur->exp-cur->next->exp==1)continue;
+        else{
+            temp=(Polynomial)malloc(sizeof(Term));
+            if(!temp){
+                printf("Memory allocation failed!\n");
+                return;
+            }
+
+            temp->coef=0;
+            temp->exp=cur->exp-1;
+            temp->next=cur->next;
+            cur->next=temp;
+            cur=temp;
+        }
+    }
+    
+    if(cur->exp==0)return;
+    else{
+        while(cur->exp){
+            temp=(Polynomial)malloc(sizeof(Term));
+            if(!temp){
+                printf("Memory allocation failed!\n");
+                return;
+            }
+
+            temp->coef=0;
+            temp->exp=cur->exp-1;
+            temp->next=NULL;
+            cur->next=temp;
+            cur=temp;
+        }
+    }
+
+    return;
+}
+
+void reduce_polynomial(Polynomial p){
+    Polynomial cur=p->next,prev=p;
+    while(cur){
+        if(!cur->exp){
+            prev->next=cur->next;
+            free(cur);
+            cur=prev->next;
+        }
+        else{
+            cur=cur->next;
+            prev=prev->next;
+        }
+    }
+}
+
+void preKaratasuba(Polynomial p1,Polynomial p2){
+    Polynomial cur1=p1->next,cur2=p2->next;
+    int length1=0,length2=0;
+    while(cur1){
+        cur1=cur1->next;
+        length1++;
+    }
+    cur1=p1->next;
+    while(cur2){
+        cur2=cur2->next;
+        length2++;
+    }
+    cur2=p2->next;
+
+    int n=(length1>length2?length1:length2);
+    oxidize_polynomial(p1,n);
+    oxidize_polynomial(p2,n);
+}
+
+Polynomial KaratsubaMultiply(Polynomial p1,Polynomial p2,int n){
+    Polynomial cur1=p1->next,cur2=p2->next,p,tail;
+
+    if(n==1){
+        p=(Polynomial)malloc(sizeof(Term));
+        if(!p){
+            printf("Memory allocation failed!\n");
+            return NULL;
+        }
+
+        tail=(Polynomial)malloc(sizeof(Term));
+        if(!tail){
+            printf("Memory allocation failed!\n");
+            free(p);
+            return NULL;
+        }
+
+        p->coef=-1;
+        p->exp=-1;
+        p->next=tail;
+        tail->coef=cur1->coef*cur2->coef;
+        tail->exp=0;
+        tail->next=NULL;
+
+        return p;
+    }
+
+    Polynomial First1=(Term*)malloc(sizeof(Term)),First0=(Term*)malloc(sizeof(Term)),\
+    Sec1=(Term*)malloc(sizeof(Term)),Sec0=(Term*)malloc(sizeof(Term));
+    if(!First1){
+        printf("Memory allocation failed!\n");
+        return NULL;
+    }
+    if(!First0){
+        printf("Memory allocation failed!\n");
+        free(First1);
+        return NULL;
+    }
+    if(!Second1){
+        printf("Memory allocation failed!\n");
+        free(First1);
+        free(First0);
+        return NULL;
+    }
+    if(!Second0){
+        printf("Memory allocation failed!\n");
+        free(First1);
+        free(First0);
+        free(Second1);
+        return NULL;
+    }
+
+    First1->coef=First0->coef=Second1->coef=Second0->coef=-1;
+    First1->exp=First0->exp=Second1->exp=Second0->exp=-1;
+    First1->next=NULL;
+    First0->next=NULL;
+    Second1->next=NULL;
+    Second0->next=NULL;
+
+    for(int i=0,tail=First1;i<(n/2);i++){
+        p=(Polynomial)malloc(sizeof(Term));
+        if(!p){
+            printf("Memory allocation failed!\n");
+            destroy_polynomial(First1);
+            free(First0);
+            free(Second1);
+            free(Second0);
+            return NULL;
+        }
+
+        p->coef=cur1->coef;
+        p->exp=cur1->exp-n/2;
+        p->next=NULL;
+        cur1=cur1->next;
+        tail->next=p;
+        tail=tail->next;
+    }
+    tail=First0;
+    while(cur1){
+        p=(Polynomial)malloc(sizeof(Term));
+        if(!p){
+            printf("Memory allocation failed!\n");
+            destroy_polynomial(First1);
+            destroy_polynomial(First1);
+            free(Second1);
+            free(Second0);
+            return NULL;
+        }
+
+        p->coef=cur1->coef;
+        p->exp=cur1->exp;
+        p->next=NULL;
+        cur1=cur1->next;
+        tail->next=p;
+        tail=tail->next;
+    }
+
+    for(int i=0,tail=Second1;i<(n/2);i++){
+        p=(Polynomial)malloc(sizeof(Term));
+        if(!p){
+            printf("Memory allocation failed!\n");
+            destroy_polynomial(First1);
+            destroy_polynomial(First0);
+            destroy_polynomial(Second1);
+            free(Second0);
+            return NULL;
+        }
+
+        p->coef=cur2->coef;
+        p->exp=cur2->exp;
+        p->next=NULL;
+        cur2=cur2->next;
+        tail->next=p;
+        tail=tail->next;
+    }
+    tail=Second0;
+    while(cur2){
+        p=(Polynomial)malloc(sizeof(Term));
+        if(!p){
+            printf("Memory allocation failed!\n");
+            destroy_polynomial(First1);
+            destroy_polynomial(First1);
+            destroy_polynomial(Second1);
+            destroy_polynomial(Second0);
+            return NULL;
+        }
+
+        p->coef=cur2->coef;
+        p->exp=cur2->exp;
+        p->next=NULL;
+        cur2=cur2->next;
+        tail->next=p;
+        tail=tail->next;
+    }
+}
+
 void print_polynomial(Polynomial p){
     Polynomial current=p->next;
     if(!current){
@@ -298,7 +540,7 @@ int main(){
     Polynomial SumPoly=add_polynomial(Poly1,Poly2);
     print_polynomial(SumPoly);
 
-    Polynomial multiPoly=multiply_polynomial(Poly1,Poly2);
+    Polynomial multiPoly=KaratsubaMultiply(Poly1,Poly2);
     print_polynomial(multiPoly);
 
     destroy_polynomial(Poly1);
