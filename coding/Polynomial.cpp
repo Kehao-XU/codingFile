@@ -385,12 +385,12 @@ Polynomial SimplyMultiply(Polynomial p1, Polynomial p2){
 void oxidize_polynomial(Polynomial p,int n){    
     Polynomial cur=p->next,temp;
     if(!cur){
-        // 如果多项式为空，直接添加一个指数为n的零项
         temp=(Polynomial)malloc(sizeof(Term));
         if(!temp){
             printf("Memory allocation failed!\n");
             return;
         }
+        
         temp->coef=0;
         temp->exp=n;
         temp->next=NULL;
@@ -427,7 +427,9 @@ void oxidize_polynomial(Polynomial p,int n){
     }
 
     while(cur->next){
-        if(cur->exp-cur->next->exp==1)continue;
+        if(cur->exp-cur->next->exp==1){
+            cur=cur->next;
+        }
         else{
             temp=(Polynomial)malloc(sizeof(Term));
             if(!temp){
@@ -480,63 +482,33 @@ void reduce_polynomial(Polynomial p){
 }
 
 int prepareKaratsuba(Polynomial p1,Polynomial p2){
-    Polynomial cur1=p1->next,cur2=p2->next;
-    int length1=0,length2=0;
+    int n1=0,n2=0;
+    n1=p1->next->exp;
+    n2=p2->next->exp;
+
+    n1=(n1>n2?n1:n2);
+    oxidize_polynomial(p1,n1);
+    oxidize_polynomial(p2,n1);
     
-    // 计算两个多项式的长度
-    while(cur1){
-        cur1=cur1->next;
-        length1++;
-    }
-    while(cur2){
-        cur2=cur2->next;
-        length2++;
-    }
-    
-    int n=(length1>length2?length1:length2);
-    
-    // 找到大于等于n的最小2的幂
-    int powerOfTwo = 1;
-    while(powerOfTwo < n) {
-        powerOfTwo *= 2;
-    }
-    n = powerOfTwo;
-    
-    // 补零操作
-    oxidize_polynomial(p1, n - 1); // 最高指数为n-1，因此多项式有n项
-    oxidize_polynomial(p2, n - 1);
-    
-    return n;
+    return n1;
 }
 
 Polynomial KaratsubaMultiply(Polynomial p1,Polynomial p2,int n){
     Polynomial cur1=p1->next,cur2=p2->next,p,tail;
 
-    if(n==1){
+    if(n<=2){
         p=(Polynomial)malloc(sizeof(Term));
         if(!p){
             printf("Memory allocation failed!\n");
             return NULL;
         }
 
-        tail=(Polynomial)malloc(sizeof(Term));
-        if(!tail){
-            printf("Memory allocation failed!\n");
-            free(p);
-            return NULL;
-        }
-
-        p->coef=-1;
-        p->exp=-1;
-        p->next=tail;
-        tail->coef=cur1->coef*cur2->coef;
-        tail->exp=0;
-        tail->next=NULL;
+        p=SimplyMultiply(p1,p2);
 
         return p;
     }
 
-    int half = n / 2;
+    int half = n / 2 +1,halfExp=n/2;
     Polynomial First1=(Term*)malloc(sizeof(Term)),First0=(Term*)malloc(sizeof(Term)),\
     Second1=(Term*)malloc(sizeof(Term)),Second0=(Term*)malloc(sizeof(Term));
     if(!First1){
@@ -592,7 +564,7 @@ Polynomial KaratsubaMultiply(Polynomial p1,Polynomial p2,int n){
     }
     
     tail=First0;
-    for(;i<n;i++){
+    for(;i<n+1;i++){
         p=(Polynomial)malloc(sizeof(Term));
         if(!p){
             printf("Memory allocation failed!\n");
@@ -633,7 +605,7 @@ Polynomial KaratsubaMultiply(Polynomial p1,Polynomial p2,int n){
     }
     
     tail=Second0;
-    for(;i<n;i++){
+    for(;i<n+1;i++){
         p=(Polynomial)malloc(sizeof(Term));
         if(!p){
             printf("Memory allocation failed!\n");
@@ -652,14 +624,18 @@ Polynomial KaratsubaMultiply(Polynomial p1,Polynomial p2,int n){
         tail=tail->next;
     }
 
-    // 计算A1*B1和A0*B0
-    Polynomial multi1=KaratsubaMultiply(First1,Second1,half);
-    Polynomial multi2=KaratsubaMultiply(First0,Second0,half);
+    if(n%2==0){
+        oxidize_polynomial(First0,halfExp);
+        oxidize_polynomial(Second0,halfExp);
+    }
+
+    Polynomial multi1=KaratsubaMultiply(First1,Second1,halfExp);
+    Polynomial multi2=KaratsubaMultiply(First0,Second0,halfExp);
     
     // 计算(A1+A0)*(B1+B0)
     Polynomial sumA=add_polynomial(First1,First0);
     Polynomial sumB=add_polynomial(Second1,Second0);
-    Polynomial midMulti=KaratsubaMultiply(sumA,sumB,half);
+    Polynomial midMulti=KaratsubaMultiply(sumA,sumB,halfExp);
     
     // 计算(A1+A0)*(B1+B0) - A1*B1
     Polynomial temp=subtract_polynomial(midMulti,multi1);
