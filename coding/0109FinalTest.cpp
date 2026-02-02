@@ -167,7 +167,7 @@ int find_longest_path(int **matrix,int n,int **result_path){
         }
     }
 
-    int length=0;
+    int length=0,curi=0,curj=0;
     while(memo[curi][curj]>0){
         if(curi-1>=0&&memo[curi-1][curj]==memo[curi][curj]-1){
             result_path[curi][curj]=++length;
