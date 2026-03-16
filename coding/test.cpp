@@ -1,13 +1,6 @@
-#include <stdio.h>
+#include <iostream>
+using namespace std;
 int main(){
-    printf("Hello world!\n");
-    printf("Hello Linux!\n");
+    cout << "Hello world!" << endl;
     return 0;
-    //RECORD CHANGES HAPPENED LATE NIGHT
-    //Adding a new comment to test cpp file upload
-    //New Attempt
-    //Second Attempt
-    //Third Attempt
-    //Fourth Attempt
-    //Fifth Attempt
 }
