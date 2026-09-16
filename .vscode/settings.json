@@ -1,0 +1,9 @@
+{
+    "clangd.fallbackFlags": [
+        "--target=x86_64-w64-windows-gnu",
+        "-I",
+        "C:/msys64/ucrt64/include",
+        "-I",
+        "C:/msys64/ucrt64/x86_64-w64-mingw32/include"
+    ]
+}
