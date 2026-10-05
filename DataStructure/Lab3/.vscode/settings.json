@@ -1,0 +1,6 @@
+{
+  // 本项目统一使用 GBK 编码：与中文 Windows 控制台默认代码页(936)一致，程序输出中文不会乱码
+  "files.encoding": "gbk",
+  // 关闭自动猜测编码，避免 VS Code 误判成 UTF-8 后保存时把文件改回 UTF-8
+  "files.autoGuessEncoding": false
+}
