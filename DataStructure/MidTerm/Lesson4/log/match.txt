@@ -1,0 +1,28 @@
+pattern = abaabcac
+  j     :   0   1   2   3   4   5   6   7
+  p[j]  :   a   b   a   a   b   c   a   c
+  next  :  -1   0   0   1   1   2   0   1
+  nextOpt:  -1   0  -1   1   0   2  -1   1
+
+pattern = aaaa
+  j     :   0   1   2   3
+  p[j]  :   a   a   a   a
+  next  :  -1   0   1   2
+  nextOpt:  -1  -1  -1  -1
+
+--- 最坏输入（BF 的退化案例） ---
+text(前 30 字符) = aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa...
+pattern = aaaab, 匹配位置：BF -1, KMP -1, BM -1
+算法 比较次数       其他
+BF              185            -
+KMP              82 text 指针不回退
+BM               37           37 次位移
+
+--- 普通文本 ---
+text(前 30 字符) = the quick brown fox jumps over...
+pattern = searches, 匹配位置：BF 50, KMP 50, BM 50
+算法 比较次数       其他
+BF               59            -
+KMP             108 text 指针不回退
+BM               16            7 次位移
+

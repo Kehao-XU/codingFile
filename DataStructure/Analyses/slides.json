@@ -1,0 +1,308 @@
+{
+  "slides": [
+    {
+      "type": "title",
+      "kicker": "CODE REVIEW · DATASTRUCTURE",
+      "title": "DataStructure 实验代码分析",
+      "subtitle": "Lab1 – Lab6  +  PJ1 Zuma  ｜  18 个源文件 · 1,566 行 · 61 个测试用例",
+      "meta": "分析对象：C:\\Users\\29606\\codingFile\\DataStructure      2026-10-26"
+    },
+    {
+      "type": "section",
+      "index": "01",
+      "title": "总览",
+      "subtitle": "7 个模块，一条从数组到综合项目的知识主线"
+    },
+    {
+      "type": "table",
+      "kicker": "OVERVIEW",
+      "title": "七个模块，一条主线",
+      "headers": ["模块", "主题", "代表算法 / 结构", "复杂度", "评价"],
+      "col_widths": [9, 14, 28, 16, 17],
+      "font_size": 12,
+      "row_h": 0.46,
+      "rows": [
+        ["Lab1", "数组与哈希", "线性扫描 · 直接寻址 · 哈希表", "O(n)", "良好，1 处越界"],
+        ["Lab2", "有序数组", "归并计数 · 快慢指针 · 双端双指针", "O(n) / O(log n)", "良好，假设过强"],
+        ["Lab3", "单链表", "三指针反转 · Floyd 判环 · 中点+反转", "O(n)，O(1) 空间", "算法正确，测试泄漏"],
+        ["Lab4", "字符串", "滑窗+哈希 · 直接寻址 · 周期枚举", "O(n) ~ O(n√n)", "编译错误 + 语义 bug"],
+        ["Lab5", "栈与窗口", "单调栈 · 单调队列 · 双栈解码", "O(n)", "设计到位，校验缺失"],
+        ["Lab6", "递归与泛型", "DFS/回溯 · 显式栈 · 广义表", "O(4ⁿ) / O(2ⁿ) / O(N)", "资源管理薄弱"],
+        ["PJ1", "综合项目", "分层架构 · 链表 · FIFO · 环形缓冲", "回合 O(N+L²)", "教学级高质量"]
+      ],
+      "note": "知识主线：数组 → 链表 → 字符串 → 栈/窗口 → 递归与泛型，最后用 PJ1 组合成完整程序"
+    },
+    {
+      "type": "bullets",
+      "kicker": "KEY FINDINGS",
+      "title": "三个关键判断",
+      "bullets": [
+        {"head": "基本功", "body": "算法选型准确、复杂度达标；Lab1–Lab5 的解题思路基本都对"},
+        {"head": "真短板", "body": "边界条件与资源管理：空输入、非法输入、无解、拷贝控制"},
+        {"head": "分层", "body": "PJ1 明显高出一档：三层架构 + 61 个用例 + 391 项断言全通过"}
+      ],
+      "note": "共整理出 4 个严重问题 · 6 个中等问题 · 5 类改进建议",
+      "font_size": 17
+    },
+    {
+      "type": "section",
+      "index": "02",
+      "title": "数组与哈希",
+      "subtitle": "Lab1 · Lab2 — 线性扫描、双指针、直接寻址"
+    },
+    {
+      "type": "table",
+      "kicker": "LAB 1",
+      "title": "数组与哈希：四道题",
+      "headers": ["文件", "考察点", "核心算法", "时间", "空间"],
+      "col_widths": [32, 22, 26, 10, 10],
+      "font_size": 12,
+      "row_h": 0.5,
+      "rows": [
+        ["LongestConsecutiveList", "最长连续递增子段", "游标扫描 + 剩余长度剪枝", "O(n)", "O(1)"],
+        ["OnlyChar", "首个不重复字符", "record[256] 直接寻址，两趟", "O(n)", "O(1)"],
+        ["OnlyChar_Optimized", "同上 + 单趟版 + 基准", "firstIdx 三态 + 队列惰性筛除", "O(n)", "O(1)"],
+        ["SumOfTwoNums", "两数之和返回下标", "unordered_map 先查后存", "平均 O(n)", "O(n)"]
+      ],
+      "note": "亮点：单趟解法的三态设计很巧；两数之和「先查后存」避免了同一元素复用"
+    },
+    {
+      "type": "bullets",
+      "kicker": "LAB 1 · ISSUES",
+      "title": "算法对，边界没兜住",
+      "bullets": [
+        {"head": "P0 越界", "body": "LongestConsecutiveList 空数组时仍访问 nums[0]，属未定义行为"},
+        {"head": "P1 越界", "body": "SumOfTwoNums 无解返回空 vector，main 直接取 ans[0] / ans[1]"},
+        {"head": "可信度", "body": "基准测试按值传 string，6.40ms vs 0.50ms 含拷贝成本，不能证明优劣"},
+        {"head": "小问题", "body": "int 接收 size() 有窄化风险；形参按值传容器多一次拷贝"}
+      ],
+      "note": "结论：思路没问题，缺的是一组空输入用例"
+    },
+    {
+      "type": "table",
+      "kicker": "LAB 2",
+      "title": "有序数组：归并与双指针",
+      "headers": ["文件", "考察点", "核心算法", "时间", "空间"],
+      "col_widths": [30, 22, 28, 10, 10],
+      "font_size": 12,
+      "row_h": 0.55,
+      "rows": [
+        ["MidOfConsecutiveArray", "两等长有序数组中位数", "归并计数 / 等长窗口二分", "O(n) / O(log n)", "O(1)"],
+        ["RemoveValueInArray", "原地删除指定值", "读写双指针，保持相对顺序", "O(n)", "O(1)"],
+        ["SquareOfConsecutiveArray", "平方后仍有序", "左右双指针从后往前填", "O(n)", "O(n)"]
+      ],
+      "note": "二分版按「第 ⌈L/2⌉ 位」定义，与样例 11 吻合；删除与平方两题实现干净"
+    },
+    {
+      "type": "bullets",
+      "kicker": "LAB 2 · ISSUES",
+      "title": "两个隐藏的强假设",
+      "bullets": [
+        {"head": "P0 越界", "body": "二分版空数组 hi = -1，仍会读 nums1[0]"},
+        {"head": "P1 假设", "body": "两版都默认「两数组等长且非空」，长度不等时语义失效、窗口可能原地循环"},
+        {"head": "数值安全", "body": "平方用 int，|nums[i]| > 46340 时溢出，而题面只约束长度"},
+        {"head": "冗余", "body": "count 与 i - nums.begin() 等价；int / size_t 混比有警告"}
+      ],
+      "note": "结论：思路都对，把「等长非空」写成断言会更稳"
+    },
+    {
+      "type": "section",
+      "index": "03",
+      "title": "链表与字符串",
+      "subtitle": "Lab3 · Lab4 — 指针操作、滑窗、优化版对比"
+    },
+    {
+      "type": "table",
+      "kicker": "LAB 3",
+      "title": "单链表：三道经典题",
+      "headers": ["文件", "考察点", "核心算法", "时间", "空间"],
+      "col_widths": [30, 22, 30, 9, 9],
+      "font_size": 12,
+      "row_h": 0.55,
+      "rows": [
+        ["1_ReverseList", "原地反转", "迭代三指针 prev / current / next", "O(n)", "O(1)"],
+        ["2_ListLoopDetect", "判环 + 入环点", "Floyd 快慢指针，相遇后同速", "O(n)", "O(1)"],
+        ["3_PalindromeListDetect", "回文 + 复原", "中点 + 反转后半 + 比较 + 再反转", "O(n)", "O(1)"]
+      ],
+      "note": "三道题的算法与边界处理都正确；回文题的奇偶分支处理完整"
+    },
+    {
+      "type": "bullets",
+      "kicker": "LAB 3 · ISSUES",
+      "title": "问题在测试，不在解法",
+      "bullets": [
+        {"head": "泄漏", "body": "2_ListLoopDetect 的测试没有调用 freeList，链表全部泄漏"},
+        {"head": "边界", "body": "makeCycle 不校验 pos，pos ≥ 长度会空指针崩溃（现有用例未触发）"},
+        {"head": "冗余", "body": "回文比较里 p2->next == nullptr 的提前 break 是多余判断"},
+        {"head": "编码", "body": "三个文件的中文注释都是 GBK，按 UTF-8 打开是乱码"}
+      ],
+      "note": "结论：代码本身可信，测试代码需要补资源释放"
+    },
+    {
+      "type": "table",
+      "kicker": "LAB 4",
+      "title": "字符串：五道题，一处编译错误",
+      "headers": ["文件", "考察点", "核心算法", "时间", "空间"],
+      "col_widths": [32, 22, 26, 10, 10],
+      "font_size": 11,
+      "row_h": 0.52,
+      "rows": [
+        ["DNARepeat", "长度 10 的重复子串", "滑窗 substr(10) + 两个 set", "O(n)", "O(n)"],
+        ["FirstCharInString", "首个不重复字符", "std::map 记录首次下标", "O(n log σ)", "O(σ)"],
+        ["FirstCharInString_Optimized", "同上", "count[256] 直接寻址", "O(n)", "O(1)"],
+        ["LoopString", "能否由子串重复构成", "枚举周期并逐位校验", "O(n·τ(n))", "O(1)"],
+        ["LoopString_Optimized", "同上", "(s+s).find(s, 1) != n", "平均近线性", "O(n)"]
+      ],
+      "note": "【严重】LoopString_Optimized.cpp 使用未声明的 a、want，g++ 复现编译失败"
+    },
+    {
+      "type": "table",
+      "kicker": "LAB 4 · COMPARISON",
+      "title": "优化版的收益与代价",
+      "headers": ["题目", "普通版", "优化版", "复杂度变化"],
+      "col_widths": [22, 30, 28, 20],
+      "font_size": 12,
+      "row_h": 0.6,
+      "rows": [
+        ["首个不重复字符", "std::map：树查找 + 结点分配", "256 桶计数数组", "O(n log σ) → O(n)"],
+        ["重复子串", "枚举周期逐位验证", "拼接后从下标 1 查找", "最坏 O(n√n) → 平均近线性"],
+        ["DNA 重复串", "无优化版", "—", "—"]
+      ],
+      "note": "另一个语义 bug：LoopString 对单字符返回 true，而「重复多次」至少要两次"
+    },
+    {
+      "type": "section",
+      "index": "04",
+      "title": "栈 · 窗口 · 递归",
+      "subtitle": "Lab5 · Lab6 — 单调结构、双栈解码、泛型与资源管理"
+    },
+    {
+      "type": "table",
+      "kicker": "LAB 5",
+      "title": "栈与滑动窗口",
+      "headers": ["文件", "考察点", "核心算法", "时间", "空间"],
+      "col_widths": [30, 22, 28, 10, 10],
+      "font_size": 12,
+      "row_h": 0.52,
+      "rows": [
+        ["DailyTemperature", "下一个更高温的间隔", "单调递减栈存下标", "O(n)", "O(n)"],
+        ["MaxInWindow", "窗口最大值（基础版）", "list 维护窗口有序值", "O(nk)", "O(k)"],
+        ["MaxInWindow_Optimized", "窗口最大值（优化版）", "deque 存下标，单调递减", "O(n)", "O(k)"],
+        ["StringCode", "解码 k[encoded_string]", "次数栈 + 前缀串栈", "O(L·d)", "O(L)"]
+      ],
+      "note": "核心亮点：O(nk) → O(n)，按下标过期比按值删除更稳健"
+    },
+    {
+      "type": "table",
+      "kicker": "LAB 6",
+      "title": "递归、回溯与泛型广义表",
+      "headers": ["文件", "考察点", "核心算法", "时间", "空间"],
+      "col_widths": [26, 24, 30, 10, 10],
+      "font_size": 12,
+      "row_h": 0.55,
+      "rows": [
+        ["DigitsOfNumber", "电话号码字母组合", "递归 DFS + Frame 栈模拟", "O(n·4ⁿ)", "O(n)"],
+        ["Subset", "全部子集", "选 / 不选递归", "O(n·2ⁿ)", "O(n)"],
+        ["GenList.h", "泛型广义表", "表头 + 孩子-兄弟链 · utype + union", "Head O(1)", "O(N)"],
+        ["GenList.cpp", "广义表加权和", "原子 value×depth，子表 depth+1", "O(N)", "O(深度)"],
+        ["GenList_test.cpp", "加权和验证", "手工构造 5 个表", "—", "—"]
+      ],
+      "note": "5 个用例（10 / 27 / 0 / 6 / 8）全部正确，递归逻辑没问题"
+    },
+    {
+      "type": "cards",
+      "kicker": "LAB 6 · RISKS",
+      "title": "GenList 的三个坑",
+      "cards": [
+        {"head": "P0", "title": "浅拷贝", "body": "没有自定义拷贝构造 / 赋值，默认拷贝 first。b = a 后共享同一条链，任一方析构会清空另一方并重复递减 ref，指针悬空。"},
+        {"head": "P1", "title": "内存泄漏", "body": "Copy 覆盖 first 前不释放旧链；Tail 不清理 lt；Remove 始终不删表头。测试注释本身也承认表头泄漏。"},
+        {"head": "P1", "title": "泛型受限", "body": "模板定义放在 .cpp，跨编译单元链接失败；union 直接放 Type，std::string 无法实例化；Equal 中 int x 未初始化。"}
+      ],
+      "font_size": 13,
+      "tall": true
+    },
+    {
+      "type": "section",
+      "index": "05",
+      "title": "PJ1 · Zuma",
+      "subtitle": "分层架构、回合流水线、61 个用例与 391 项断言"
+    },
+    {
+      "type": "table",
+      "kicker": "PJ1 · ARCHITECTURE",
+      "title": "四层结构，依赖单向",
+      "headers": ["层", "目录", "职责", "关键类"],
+      "col_widths": [14, 10, 42, 34],
+      "font_size": 12,
+      "row_h": 0.75,
+      "rows": [
+        ["表现层", "cli/", "命令解析、终端渲染、菜单与主循环", "CommandParser · ConsoleView · ConsoleApp"],
+        ["应用/规则层", "core/", "回合流水线、合法性、胜负、撤销编排", "Game · TurnResult"],
+        ["领域层", "core/", "轨道、消除、供弹、关卡、计分、快照", "Track · EliminationEngine · FeedQueue · LevelLoader"],
+        ["基础设施", "util/", "文本处理、ANSI / UTF-8 / 终端探测", "StringUtil · ConsoleColor"]
+      ],
+      "note": "依赖方向：main → ConsoleApp → Game → 领域对象 → util；core 不写 stdout、不含 cli 头"
+    },
+    {
+      "type": "bullets",
+      "kicker": "PJ1 · ENGINEERING",
+      "title": "它为什么明显高出一档",
+      "bullets": [
+        {"head": "边界", "body": "Game::View() 只返回只读视图，表现层无法直接改状态"},
+        {"head": "规则", "body": "Fire / Drop 共用 ApplyEndOfTurn，两条路径不会规则漂移"},
+        {"head": "结构", "body": "链表、FIFO、环形缓冲、栈式历史、哈希颜色表各有明确理由"},
+        {"head": "测试", "body": "8 个测试文件、61 个 CASE、391 项检查，本地实测 0 失败"}
+      ],
+      "note": "回合顺序：校验 → 快照 → 插入/丢弃 → 消除 → 入球 → 推进弹药 → 回合+1 → 判胜负",
+      "font_size": 16
+    },
+    {
+      "type": "bullets",
+      "kicker": "PJ1 · IMPROVEMENTS",
+      "title": "还能再拧紧的四颗螺丝",
+      "bullets": [
+        {"head": "逻辑漏洞", "body": "Game 在非 Playing 状态提示可 UNDO，但结束菜单只接受 R/N/Q，赛后撤销实际不可达"},
+        {"head": "文档漂移", "body": "ARCHITECTURE.md 声称的行长截断、IHintProvider、test_scoreboard 均与代码不符"},
+        {"head": "构建约束", "body": "core / cli / util 编进同一个静态库，分层只靠约定，可拆成 domain + cli"},
+        {"head": "测试盲区", "body": "缺 ConsoleApp 集成测试和 ScoreBoard 直测；getline 无行长上限"}
+      ],
+      "note": "这些都属于「工程细节」，不影响它作为教学项目的完成度",
+      "font_size": 16
+    },
+    {
+      "type": "table",
+      "kicker": "PRIORITY",
+      "title": "P0 清单：四个必须修",
+      "headers": ["#", "位置", "问题", "影响"],
+      "col_widths": [5, 30, 40, 25],
+      "font_size": 12,
+      "row_h": 0.62,
+      "rows": [
+        ["1", "Lab4 / LoopString_Optimized.cpp", "main 使用未声明的 a、want", "编译失败"],
+        ["2", "Lab6 / GenList.h", "无拷贝控制，浅拷贝 first", "双重释放、悬空指针"],
+        ["3", "Lab1 / LongestConsecutiveList.cpp", "空数组仍访问 nums[0]", "未定义行为"],
+        ["4", "Lab2 / MidOfConsecutiveArray.cpp", "空数组 hi = -1 仍读 nums1[0]", "未定义行为"]
+      ],
+      "note": "P1 还有 6 项：单字符语义、无解越界、非法输入 UB、Equal 未初始化、测试泄漏、赛后 UNDO"
+    },
+    {
+      "type": "cards",
+      "kicker": "ACTION",
+      "title": "最该补的三件事",
+      "cards": [
+        {"head": "01", "title": "边界用例", "body": "空输入、单元素、无解、非法格式。P0 / P1 里超过一半的问题，都能被这一组用例挡住。"},
+        {"head": "02", "title": "资源管理", "body": "给 GenList 实现三/五法则，Lab3 测试补 freeList。C++ 里这类问题比算法错误更危险。"},
+        {"head": "03", "title": "整体构建", "body": "LoopString_Optimized 编译失败说明提交前没整体构建过。加一个 build_all.ps1 或 CI 即可。"}
+      ],
+      "font_size": 14,
+      "tall": true
+    },
+    {
+      "type": "title",
+      "kicker": "THANKS",
+      "title": "报告完",
+      "subtitle": "Markdown 全文见 output/DataStructure-Labs-分析报告.md",
+      "meta": "由 4 个并行子代理分模块分析 ｜ 主代理合并 · 分级 · 生成 PPT"
+    }
+  ]
+}

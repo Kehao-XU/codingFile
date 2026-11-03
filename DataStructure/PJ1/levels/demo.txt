@@ -1,0 +1,10 @@
+# 教学关卡：一条命令即可演示「普通消除 + 连锁消除 + 胜利」
+# ACTIVE=RRGGRR，用 AMMO=GGG 的当前球 G 插入到第 3 位（两个 G 之前）
+#   -> RRGGGRR 中 GGG 被普通消除
+#   -> 断点两侧的 RR 与 RR 合并成 RRRR 被连锁消除（第 2 轮）
+#   -> 轨道清空且等待区为空 => 胜利
+NAME=演示关（普通消除+连锁消除+胜利）
+ACTIVE=RRGGRR
+FEED=
+AMMO=GGG
+MAX_LENGTH=8
