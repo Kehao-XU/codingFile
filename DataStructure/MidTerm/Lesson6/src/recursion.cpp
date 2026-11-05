@@ -2,6 +2,8 @@
 // 三个实验：Hanoi 的递归规模、Fib 的重复计算、n 皇后的回溯。
 // 对应学案 06 第七节。
 // 构建：g++ -O2 -std=c++17 src/recursion.cpp -o output/recursion.exe
+//
+// 练习骨架：TODO 处自己补，参考答案在 solution/recursion.cpp。
 
 #include <cstdio>
 #include <ctime>
@@ -10,53 +12,39 @@
 long long hanoiCalls = 0;
 long long hanoiMoves = 0;
 
+// TODO: 递归解 Hanoi。每次进入函数先 ++hanoiCalls（含 n == 0 的空调用）；
+//       n == 0 直接返回；否则按三步走：n-1 个移到 via，最大盘移动到 to，
+//       再把这 n-1 个从 via 移到 to。每真正搬动一个盘子 ++hanoiMoves。
+//       自测：n 个盘子的移动次数应为 2^n - 1，递归调用次数应为 2^(n+1) - 1。
 void hanoi(int n, char from, char via, char to) {
-    ++hanoiCalls;
-    if (n == 0) return;                 // 出口：没有盘子可移
-    hanoi(n - 1, from, to, via);        // ① n-1 个先挪到中转柱
-    ++hanoiMoves;                       // ② 最大的那个直接搬
-    hanoi(n - 1, via, from, to);        // ③ n-1 个再挪到目标柱
+    // TODO
 }
 
 // ---------------- Fibonacci ----------------
 long long fibCalls = 0;
 
+// TODO: 朴素递归求 Fib。每次进入函数先 ++fibCalls；n <= 1 时直接返回 n。
+//       自测：n = 30 时递归调用次数应达到 2,692,537 次，这就是重复计算的代价。
 long long fibRec(int n) {
-    ++fibCalls;
-    if (n <= 1) return n;
-    return fibRec(n - 1) + fibRec(n - 2);
+    // TODO
 }
 
+// TODO: 迭代求 Fib，避免重复计算。steps 记录循环体执行了多少次（n <= 1 时为 0）。
+//       自测：Fib(30) 与递归版结果相同，但 steps 只有 29。
 long long fibIter(int n, long long &steps) {
-    steps = 0;
-    if (n <= 1) return n;
-    long long a = 0, b = 1;
-    for (int i = 2; i <= n; ++i) {
-        long long c = a + b;
-        a = b;
-        b = c;
-        ++steps;
-    }
-    return b;
+    // TODO
 }
 
 // ---------------- n 皇后 ----------------
 int n, solutions;
 int col[16], md[32], sd[32];            // 列、主对角线、次对角线占用标记
 
+// TODO: 逐行放置皇后。行号 row 从 0 到 n-1，放满 n 行时 ++solutions 并返回。
+//       每一列 j 都要检查：同列 col[j]、主对角线 md[n + row - j - 1]、
+//       次对角线 sd[row + j] 是否已被占用；能放就置位、递归下一行、再复位（回溯）。
+//       自测：n = 8 时应有 92 个解。
 void queen(int row) {
-    if (row == n) {                     // 放满 n 行，得到一个解
-        ++solutions;
-        return;
-    }
-    for (int j = 0; j < n; ++j) {
-        int m = n + row - j - 1;        // 主对角线编号
-        int s = row + j;                // 次对角线编号
-        if (col[j] || md[m] || sd[s]) continue;   // 被攻击，换下一列
-        col[j] = md[m] = sd[s] = 1;               // 落子
-        queen(row + 1);
-        col[j] = md[m] = sd[s] = 0;               // 撤销（回溯）
-    }
+    // TODO
 }
 
 int solveQueens(int size) {

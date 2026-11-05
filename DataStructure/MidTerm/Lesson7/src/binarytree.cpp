@@ -2,6 +2,8 @@
 // 由前序+中序建树、三种遍历、统计量、层序判完全二叉树。
 // 对应学案 07 第九节。
 // 构建：g++ -O2 -std=c++17 src/binarytree.cpp -o output/binarytree.exe
+//
+// 练习骨架：TODO 处自己补，参考答案在 solution/binarytree.cpp。
 
 #include <cstdio>
 #include <queue>
@@ -13,92 +15,59 @@ struct Node {
 };
 
 // ---------- 由前序 + 中序建树 ----------
-// vlr: 前序序列起点；lvr: 中序序列起点；n: 本子树结点数
+// TODO: 递归建树。vlr 指向前序序列当前位置，lvr 指向中序序列起点，n 是本子树结点数。
+//       前序第一个字符是根；在中序里找到它的位置 k，k 就是左子树大小。
+//       左子树用 (vlr+1, lvr, k)，右子树用 (vlr+k+1, lvr+k+1, n-k-1)。
+//       自测：前序 ABHFDECKG、中序 HBDFAEKCG 应还原出同一棵树。
 Node *buildFromPreIn(const char *vlr, const char *lvr, int n) {
-    if (n == 0) return nullptr;
-    char root = vlr[0];
-    int k = 0;
-    while (lvr[k] != root) ++k;          // 根在中序中的位置 = 左子树大小
-    Node *p = new Node(root);
-    p->left = buildFromPreIn(vlr + 1, lvr, k);
-    p->right = buildFromPreIn(vlr + k + 1, lvr + k + 1, n - k - 1);
-    return p;
+    // TODO
 }
 
 // ---------- 遍历 ----------
+// TODO: 四种遍历，各自直接按序 printf("%c", ...) 输出，不加分隔符。
+//       前序：根 左 右；中序：左 根 右；后序：左 右 根；
+//       层序：用 std::queue 辅助，出队即输出，非空子女依次入队。
 void preOrder(Node *p) {
-    if (!p) return;
-    std::printf("%c", p->data);
-    preOrder(p->left);
-    preOrder(p->right);
+    // TODO
 }
 
 void inOrder(Node *p) {
-    if (!p) return;
-    inOrder(p->left);
-    std::printf("%c", p->data);
-    inOrder(p->right);
+    // TODO
 }
 
 void postOrder(Node *p) {
-    if (!p) return;
-    postOrder(p->left);
-    postOrder(p->right);
-    std::printf("%c", p->data);
+    // TODO
 }
 
 void levelOrder(Node *p) {
-    if (!p) return;
-    std::queue<Node *> q;
-    q.push(p);
-    while (!q.empty()) {
-        Node *cur = q.front();
-        q.pop();
-        std::printf("%c", cur->data);
-        if (cur->left) q.push(cur->left);
-        if (cur->right) q.push(cur->right);
-    }
+    // TODO
 }
 
 // ---------- 统计量 ----------
-int size(Node *p) { return p ? 1 + size(p->left) + size(p->right) : 0; }
+// TODO: 结点数 / 高度（空树为 0，单结点为 1）/ 叶子数 / 空指针域个数。
+//       空指针域 = 每个结点缺的左、右指针之和，满足 n 个结点的二叉树有 n+1 个。
+int size(Node *p) {
+    // TODO
+}
 
 int height(Node *p) {
-    if (!p) return 0;
-    int l = height(p->left), r = height(p->right);
-    return 1 + (l > r ? l : r);
+    // TODO
 }
 
 int leaves(Node *p) {
-    if (!p) return 0;
-    if (!p->left && !p->right) return 1;
-    return leaves(p->left) + leaves(p->right);
+    // TODO
 }
 
-int emptyPointers(Node *p) {                       // 空指针域个数
-    if (!p) return 0;
-    int self = (p->left ? 0 : 1) + (p->right ? 0 : 1);
-    return self + emptyPointers(p->left) + emptyPointers(p->right);
+int emptyPointers(Node *p) {
+    // TODO
 }
 
 // ---------- 判完全二叉树：层序，空子女也入队 ----------
+// TODO: 层序走一遍，空结点也入队。第一次遇到空结点后置标记，
+//       之后再出现非空结点就不是完全二叉树。
+//       自测：按层序数组 1234567890 建的树是完全二叉树，上面那棵不是。
 bool isComplete(Node *root) {
-    if (!root) return true;
-    std::queue<Node *> q;
-    q.push(root);
-    bool seenNull = false;
-    while (!q.empty()) {
-        Node *p = q.front();
-        q.pop();
-        if (!p) {
-            seenNull = true;
-            continue;
-        }
-        if (seenNull) return false;                // 空结点之后又出现非空
-        q.push(p->left);
-        q.push(p->right);
-    }
-    return true;
+    // TODO
 }
 
 void destroy(Node *p) {

@@ -3,36 +3,30 @@
 // 对应学案 01 第七节任务 2。
 // 构建：g++ -O2 -std=c++17 timing.cpp -o ../output/timing.exe
 // 运行：../output/timing.exe > ../log/timing.txt
+//
+// 练习骨架：TODO 处自己补，参考答案在 solution/timing.cpp。
 
 #include <cstdio>
 #include <ctime>
 
-// 注意：这里用 s = s * 31 + i 而不是 s += i。
-// 若写成求和，编译器会把整个循环折叠成公式 n(n-1)/2，测出来的就不是循环了。
+// TODO: 写一个 O(n) 的工作量函数：循环 n 次，返回值必须真的依赖循环。
+//       提示：写成 s += i 时，-O2 会直接折叠成公式 n(n-1)/2，测出来就不是循环了。
 long long workOn(int n) {
-    long long s = 0;
-    for (int i = 0; i < n; i++)
-        s = s * 31 + i;
-    return s;
+    // TODO
 }
 
+// TODO: 写一个 O(n^2) 的工作量函数：双层循环各跑 n 次，同样不能让编译器折叠。
 long long workOn2(int n) {
-    long long s = 0;
-    for (int i = 0; i < n; i++)
-        for (int j = 0; j < n; j++)
-            s = s * 31 + j;
-    return s;
+    // TODO
 }
 
 volatile long long sink;  // 防止编译器把无副作用的调用整体优化掉
 
-// 重复 reps 次，返回单次调用的平均耗时（秒）
+// TODO: 把 f(n) 重复调用 reps 次，用 std::clock() 计时，返回单次平均耗时（秒）。
+//       要点：结果要写进 sink，否则 -O2 会把整个循环删掉；
+//             返回的是 (t2 - t1) / CLOCKS_PER_SEC / reps。
 double perCall(long long (*f)(int), int n, int reps) {
-    std::clock_t t1 = std::clock();
-    for (int r = 0; r < reps; r++)
-        sink = f(n);
-    std::clock_t t2 = std::clock();
-    return double(t2 - t1) / CLOCKS_PER_SEC / reps;
+    // TODO
 }
 
 int main() {

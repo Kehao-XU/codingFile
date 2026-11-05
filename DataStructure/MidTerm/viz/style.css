@@ -1,0 +1,151 @@
+:root {
+  --bg: #fbfbfa;
+  --fg: #1f2328;
+  --muted: #5b636b;
+  --line: #d6d9de;
+  --accent: #2f6fdb;
+  --hot: #e05a2b;
+  --ok: #2e8b57;
+  --box: #ffffff;
+  --box2: #eef2f8;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1b1d21;
+    --fg: #e6e8eb;
+    --muted: #9aa2ab;
+    --line: #3a3f46;
+    --accent: #6ea0ff;
+    --hot: #ff8a5c;
+    --ok: #5fc98a;
+    --box: #24272c;
+    --box2: #2f343b;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 32px 20px 64px;
+  background: var(--bg);
+  color: var(--fg);
+  font: 16px/1.65 -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+}
+
+main, .wrap {
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+h1 { font-size: 28px; margin: 0 0 8px; }
+h2 { font-size: 21px; margin: 40px 0 12px; }
+h3 { font-size: 17px; margin: 0 0 6px; }
+
+p { margin: 0 0 12px; }
+p.note { color: var(--muted); font-size: 14px; margin-bottom: 10px; }
+
+nav.top { font-size: 14px; color: var(--muted); margin-bottom: 24px; }
+nav.top a { color: var(--muted); text-decoration: none; border-bottom: 1px dotted currentColor; }
+nav.top a:hover { color: var(--accent); }
+
+.viz {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 16px 16px 12px;
+  margin: 20px 0;
+  background: var(--box);
+  outline: none;
+}
+.viz:focus-visible { border-color: var(--accent); }
+
+.stage {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 4px 0 8px;
+}
+
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+.bar button {
+  font: inherit;
+  font-size: 14px;
+  padding: 5px 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--box2);
+  color: var(--fg);
+  cursor: pointer;
+}
+.bar button:hover { border-color: var(--accent); }
+.bar button.primary { border-color: var(--accent); color: var(--accent); }
+.bar input[type="range"] { width: 90px; accent-color: var(--accent); }
+.bar .small { font-size: 12px; color: var(--muted); }
+
+.cap {
+  margin-top: 8px;
+  min-height: 22px;
+  font-size: 14px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+svg text.tx { fill: var(--fg); font-size: 13px; font-family: inherit; }
+svg text.tx.small { font-size: 11px; fill: var(--muted); }
+svg text.tx.hot { fill: var(--hot); font-weight: 600; }
+svg text.tx.ok { fill: var(--ok); font-weight: 600; }
+svg text.tx.acc { fill: var(--accent); }
+svg text.tx.mono { font-family: Consolas, "Cascadia Mono", monospace; }
+
+/* 第 1 讲四条曲线的配色 */
+svg path.k1 { stroke: #2f6fdb; }
+svg path.k2 { stroke: #2e8b57; }
+svg path.k3 { stroke: #b0741f; }
+svg path.k4 { stroke: #d0492b; }
+svg text.tx.k1 { fill: #2f6fdb; }
+svg text.tx.k2 { fill: #2e8b57; }
+svg text.tx.k3 { fill: #b0741f; }
+svg text.tx.k4 { fill: #d0492b; }
+
+svg rect.bx { fill: var(--box); stroke: var(--line); stroke-width: 1.4; }
+svg rect.bx.dim { fill: transparent; stroke: var(--line); stroke-dasharray: 3 3; }
+svg rect.bx.hot { fill: rgba(224, 90, 43, .12); stroke: var(--hot); }
+svg rect.bx.ok { fill: rgba(46, 139, 87, .12); stroke: var(--ok); }
+svg rect.bx.acc { fill: rgba(47, 111, 219, .10); stroke: var(--accent); }
+svg rect.bx.hl { fill: var(--box2); stroke: var(--line); }
+
+svg circle.nd { fill: var(--box); stroke: var(--line); stroke-width: 1.4; }
+svg circle.nd.hot { fill: rgba(224, 90, 43, .12); stroke: var(--hot); }
+svg circle.nd.ok { fill: rgba(46, 139, 87, .12); stroke: var(--ok); }
+svg circle.nd.acc { fill: rgba(47, 111, 219, .10); stroke: var(--accent); }
+
+svg line.ln { stroke: var(--line); stroke-width: 1.4; }
+svg line.ln.acc { stroke: var(--accent); }
+svg line.ln.hot { stroke: var(--hot); }
+svg line.ln.ok { stroke: var(--ok); }
+svg path.ln { stroke: var(--line); stroke-width: 1.4; }
+svg path.ln.acc { stroke: var(--accent); }
+svg path.ln.hot { stroke: var(--hot); }
+svg path.arhead { fill: var(--muted); }
+svg line.ar.acc { stroke: var(--accent); }
+svg line.ar.hot { stroke: var(--hot); }
+svg path.ar.acc { stroke: var(--accent); }
+svg path.ar.hot { stroke: var(--hot); }
+
+ul.plain { margin: 0 0 12px; padding-left: 20px; }
+ul.plain li { margin: 4px 0; }
+
+.links a { color: var(--accent); }
+footer { margin-top: 48px; color: var(--muted); font-size: 13px; }
+
+@media (max-width: 600px) {
+  body { padding: 20px 12px 48px; }
+  .viz { padding: 12px 10px 8px; }
+}

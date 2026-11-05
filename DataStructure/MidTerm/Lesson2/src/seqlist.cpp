@@ -2,6 +2,8 @@
 // 三个实验：顺序表平均移动次数、三对角矩阵地址映射、稀疏矩阵快速转置。
 // 对应学案 02 第六节。
 // 构建：g++ -O2 -std=c++17 src/seqlist.cpp -o output/seqlist.exe
+//
+// 练习骨架：TODO 处自己补，参考答案在 solution/seqlist.cpp。
 
 #include <cstdio>
 #include <cstdlib>
@@ -16,28 +18,18 @@ public:
 
     int size() const { return last + 1; }
 
-    // 在第 i 个位置插入 x，moves 累加元素搬移次数
+    // TODO: 在第 i 个位置插入 x，合法范围 0..n，成功返回 true。
+    //       每搬移一个元素就给 moves 加 1；表满返回 false。
+    //       自测：n=10 的满表，各位置等概率插入，平均搬移次数应接近 n/2。
     bool insert(int i, int x, long long &moves) {
-        if (i < 0 || i > last + 1) return false;  // 合法范围 0..n
-        if (last + 1 == cap) return false;
-        for (int j = last; j >= i; --j) {         // 从后往前搬
-            data[j + 1] = data[j];
-            ++moves;
-        }
-        data[i] = x;
-        ++last;
-        return true;
+        // TODO
     }
 
-    // 删除第 i 个元素，moves 累加元素搬移次数
+    // TODO: 删除第 i 个元素，合法范围 0..n-1，成功返回 true。
+    //       每搬移一个元素就给 moves 加 1；空表或越界返回 false。
+    //       自测：平均搬移次数应接近 (n-1)/2。
     bool remove(int i, long long &moves) {
-        if (i < 0 || i > last) return false;      // 合法范围 0..n-1
-        for (int j = i; j < last; ++j) {          // 从前往后搬
-            data[j] = data[j + 1];
-            ++moves;
-        }
-        --last;
-        return true;
+        // TODO
     }
 
 private:
@@ -87,17 +79,30 @@ static void experimentMoveCost() {
 }
 
 // ---------- 三对角矩阵 ----------
+// TODO: 三对角矩阵按行优先压缩到一维数组，求 (i, j) 对应的一维下标 k。
+//       前提：|i - j| <= 1 的元素才非零，且 i < j 时的越界项不算。
+//       自测：n=6 时，与下面 experimentTridiagonal 的还原能一一对上。
+int tridiagonalIndex(int i, int j) {
+    // TODO
+}
+
+// TODO: 已知一维下标 k，反解出行列 (i, j)。
+//       自测：(i,j) -> k -> (i,j) 对全部非零元素都能原样还原。
+void tridiagonalPos(int k, int &i, int &j) {
+    // TODO
+}
+
 static void experimentTridiagonal() {
-    std::printf("=== 实验 2：三对角矩阵 k = 2i + j 的双向验证（n = 6）===\n");
+    std::printf("=== 实验 2：三对角矩阵的双向验证（n = 6）===\n");
     const int n = 6;
     int bad = 0, count = 0;
     std::printf("%3s %3s %4s %8s %8s\n", "i", "j", "k", "i'(k)", "j'(k)");
     for (int i = 0; i < n; ++i) {
         for (int j = i - 1; j <= i + 1; ++j) {
             if (j < 0 || j >= n) continue;      // 跳过越界
-            int k = 2 * i + j;
-            int i2 = (k + 1) / 3;               // 反解：3i-1 <= k < 3(i+1)-1
-            int j2 = k - 2 * i2;
+            int k = tridiagonalIndex(i, j);
+            int i2 = 0, j2 = 0;
+            tridiagonalPos(k, i2, j2);
             std::printf("%3d %3d %4d %8d %8d%s\n", i, j, k, i2, j2,
                         (i2 == i && j2 == j) ? "" : "  <-- mismatch");
             if (i2 != i || j2 != j) ++bad;
@@ -112,38 +117,17 @@ struct Triple {
     int row, col, val;
 };
 
-// 朴素转置：对原矩阵每一列扫描整张三元组表，返回比较次数
+// TODO: 朴素转置：对原矩阵每一列扫描整张三元组表，结果写进 b。
+//       返回值是列号比较的总次数，用于和快速转置对比复杂度。
+//       自测：8 个三元组、7 列时，比较次数应为 7×8 = 56。
 static int naiveTranspose(const Triple *a, int terms, int cols, Triple *b) {
-    int pos = 0, cmp = 0;
-    for (int k = 0; k < cols; ++k) {
-        for (int i = 0; i < terms; ++i) {
-            ++cmp;                              // 一次列号比较
-            if (a[i].col == k) {
-                b[pos].row = a[i].col;
-                b[pos].col = a[i].row;
-                b[pos].val = a[i].val;
-                ++pos;
-            }
-        }
-    }
-    return cmp;
+    // TODO
 }
 
-// 快速转置：先统计每列非零元个数，再算各行起始位置，最后一趟放置
+// TODO: 快速转置：两趟扫描。第一趟统计每列（转置后每行）非零元个数，
+//       第二趟算出各行起始位置后直接放置，整体 O(Cols + Terms)。
 static void fastTranspose(const Triple *a, int terms, int cols, Triple *b) {
-    int *rowSize = new int[cols]();
-    int *rowStart = new int[cols]();
-    for (int i = 0; i < terms; ++i) rowSize[a[i].col]++;      // O(Terms)
-    for (int c = 1; c < cols; ++c)                            // O(Cols)
-        rowStart[c] = rowStart[c - 1] + rowSize[c - 1];
-    for (int i = 0; i < terms; ++i) {                         // O(Terms)
-        int j = rowStart[a[i].col]++;
-        b[j].row = a[i].col;
-        b[j].col = a[i].row;
-        b[j].val = a[i].val;
-    }
-    delete[] rowSize;
-    delete[] rowStart;
+    // TODO
 }
 
 static void experimentSparse() {

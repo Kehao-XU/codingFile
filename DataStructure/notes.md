@@ -20,7 +20,9 @@
 | `MidTerm/Lesson7/` | 学案07_树与二叉树.md | 术语、性质、遍历、建树 | `src/binarytree.cpp` |
 | `MidTerm/Lesson8/` | 学案08_二叉树续.md | Catalan、线索、堆、Huffman | `src/heap_huffman.cpp` |
 
-每个 lesson 下都是 `学案*.md` + `src/` + `output/` + `log/`：`output/` 放 `.exe`（已忽略），`log/` 放实测日志 `.txt`（进库）。
+每个 lesson 下都是 `学案*.md` + `src/` + `solution/` + `output/` + `log/`：`src/` 是练习骨架（函数体只剩 `// TODO` + 任务描述），`solution/` 是参考答案，`output/` 放 `.exe`（已忽略），`log/` 放实测日志 `.txt`（进库）。
+
+另外两份横向材料：`MidTerm/期中总复习.md`（八讲汇总 + 30 条易错点 + 往年卷链接），`MidTerm/viz/`（16 个自包含 HTML 动画，`index.html` 是入口，双击即可看，无外部依赖）。
 
 工具：`tools/extract_pptx.py` 抽课件正文，用法见文末。
 

@@ -2,24 +2,22 @@
 // 四件事：Catalan 计数、最小堆插入、堆排序、霍夫曼编码。
 // 对应学案 08 第五节。
 // 构建：g++ -O2 -std=c++17 src/heap_huffman.cpp -o output/heap_huffman.exe
+//
+// 练习骨架：TODO 处自己补，参考答案在 solution/heap_huffman.cpp。
 
 #include <cstdio>
 
 // ---------------- 1. Catalan ----------------
-long long catalanRec(int n, long long *b) {   // 递推：b[n] = Σ b[i]*b[n-1-i]
-    b[0] = 1;
-    for (int k = 1; k <= n; ++k) {
-        long long s = 0;
-        for (int i = 0; i < k; ++i) s += b[i] * b[k - 1 - i];
-        b[k] = s;
-    }
-    return b[n];
+// TODO: 用递推求 b[0..n]。b[0] = 1，b[k] = Σ(i=0..k-1) b[i] * b[k-1-i]，返回 b[n]。
+//       自测：b[0..8] = 1, 1, 2, 5, 14, 42, 132, 429, 1430。
+long long catalanRec(int n, long long *b) {
+    // TODO
 }
 
-long long catalanFormula(int n) {             // 通项：C(2n,n)/(n+1)
-    long long c = 1;
-    for (int i = 1; i <= n; ++i) c = c * (n + i) / i;   // 先算 C(2n,n)
-    return c / (n + 1);
+// TODO: 用通项 C(2n, n) / (n + 1) 直接算。注意边算边除，别让中间值溢出。
+//       自测：与递推版对每个 n 都应相等。
+long long catalanFormula(int n) {
+    // TODO
 }
 
 void taskCatalan() {
@@ -38,10 +36,10 @@ public:
     explicit MinHeap(int cap) : cap(cap), size(0), a(new int[cap]) {}
     ~MinHeap() { delete[] a; }
 
+    // TODO: 把 x 放到数组末尾（下标 size），对新位置做一次 siftUp，然后 ++size。
+    //       注意先放再上浮，size 在最后自增。
     void insert(int x) {
-        a[size] = x;
-        siftUp(size);
-        ++size;
+        // TODO
     }
 
     void print() const {
@@ -51,15 +49,10 @@ public:
     }
 
 private:
-    void siftUp(int j) {                       // 新元素一路上浮
-        int i = (j - 1) / 2;                   // 父结点
-        int temp = a[j];
-        while (j > 0 && a[i] > temp) {
-            a[j] = a[i];
-            j = i;
-            i = (i - 1) / 2;
-        }
-        a[j] = temp;
+    // TODO: 从下标 j 开始向上调整，直到父结点不大于自己或到达根。
+    //       要点：先把 a[j] 暂存，一路把父结点往下挪，最后再填回，避免反复交换。
+    void siftUp(int j) {
+        // TODO
     }
 
     int cap, size;
@@ -79,28 +72,17 @@ void taskHeapInsert() {
 }
 
 // ---------------- 3. 堆排序 ----------------
-void siftDown(int *a, int i, int n) {          // 在 a[0..n-1] 内把 a[i] 沉下去
-    int temp = a[i];
-    int j = 2 * i + 1;                         // 左子女
-    while (j < n) {
-        if (j + 1 < n && a[j + 1] > a[j]) ++j; // 选较大的子女
-        if (temp >= a[j]) break;
-        a[i] = a[j];
-        i = j;
-        j = 2 * j + 1;
-    }
-    a[i] = temp;
+// TODO: 在 a[0..n-1] 内把 a[i] 向下调整（最大堆语义）。
+//       先暂存 a[i]，每轮在左右子女里挑较大的，比它大就上移，直到比不下或到底。
+void siftDown(int *a, int i, int n) {
+    // TODO
 }
 
+// TODO: 堆排序（升序）。先从最后一个非叶结点 (n-2)/2 开始倒着 siftDown 建最大堆，
+//       再反复把堆顶换到末尾、待调整范围缩小一格。
+//       自测：{53,17,78,9,45,65,87,23} 排序后应为 9 17 23 45 53 65 78 87。
 void heapSort(int *a, int n) {
-    for (int i = (n - 2) / 2; i >= 0; --i)     // 建最大堆：从最后一个非叶结点开始
-        siftDown(a, i, n);
-    for (int i = n - 1; i > 0; --i) {          // 每次把堆顶换到末尾
-        int t = a[0];
-        a[0] = a[i];
-        a[i] = t;
-        siftDown(a, 0, i);                     // 待调整范围缩小到 i
-    }
+    // TODO
 }
 
 void printArray(const char *tag, const int *a, int n) {
@@ -124,8 +106,12 @@ void taskHeapSort() {
 }
 
 // ---------------- 4. 霍夫曼 ----------------
-// 用数组存 2n-1 个结点：0..n-1 是叶，n..2n-2 是内部结点。
-// 每次扫描所有"还没有父结点"的结点，取权值最小的两个合并。
+// TODO: 用数组法构造霍夫曼树，返回 WPL。
+//       结点 0..n-1 是叶子（权值 w[i]），n..2n-2 是内部结点。
+//       每轮在所有 parent == -1 的结点里找权值最小和次小的两个，合并成新结点 k：
+//       val[k] = 两者之和，parent 设为 k，lc[k] 记小的、rc[k] 记大的，并打印
+//       "  合并 %d 与 %d -> %d\n"。WPL 就是所有内部结点权值之和。
+//       调用前 val/parent/lc/rc 已初始化，叶子的 val 已填好。
 void taskHuffman() {
     std::printf("=== 任务 4：霍夫曼编码 ===\n");
     const char ch[] = {'A', 'T', 'C', 'S'};
@@ -143,35 +129,12 @@ void taskHuffman() {
         lc[i] = rc[i] = -1;
     }
 
+    // TODO: 合并 n-1 轮，得到 wpl。
     int wpl = 0;
-    for (int k = n; k < total; ++k) {
-        int m1 = -1, m2 = -1;                        // 最小、次小
-        for (int i = 0; i < k; ++i) {
-            if (parent[i] != -1) continue;
-            if (m1 == -1 || val[i] < val[m1]) { m2 = m1; m1 = i; }
-            else if (m2 == -1 || val[i] < val[m2]) { m2 = i; }
-        }
-        val[k] = val[m1] + val[m2];
-        parent[m1] = parent[m2] = k;
-        lc[k] = m1;                                  // 小的在左，记 0
-        rc[k] = m2;
-        wpl += val[k];                               // 内部结点权值之和 = WPL
-        std::printf("  合并 %d 与 %d -> %d\n", val[m1], val[m2], val[k]);
-    }
 
+    // TODO: 输出编码。对每个叶子从下往上走到根，左子女记 '0'、右子女记 '1'，
+    //       收集完逆序打印。格式："    %c : " 后跟编码，再跟 "   (权值 %d)\n"。
     std::printf("  编码：\n");
-    for (int i = 0; i < n; ++i) {
-        char code[16];
-        int len = 0, cur = i;
-        while (parent[cur] != -1) {                  // 从叶往上走到根
-            int p = parent[cur];
-            code[len++] = (lc[p] == cur) ? '0' : '1';
-            cur = p;
-        }
-        std::printf("    %c : ", ch[i]);
-        for (int j = len - 1; j >= 0; --j) std::printf("%c", code[j]);
-        std::printf("   (权值 %d)\n", w[i]);
-    }
 
     int sumWL = 0;                                   // 另一种算法：Σ w_i × 深度
     for (int i = 0; i < n; ++i) {
