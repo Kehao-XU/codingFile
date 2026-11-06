@@ -36,7 +36,6 @@
       exp: (k) => Math.pow(2, k),
     };
     const colors = { n: "k1", nlogn: "k2", n2: "k3", exp: "k4" };
-    const names = { n: "n", nlogn: "n log n", n2: "n²", exp: "2ⁿ" };
 
     function draw(g, f) {
       V.line(g, L, T, L, B, "");
@@ -52,14 +51,11 @@
         V.text(g, L - 10, y + 4, String(v), "small", "end");
       }
       V.text(g, (L + R) / 2, B + 38, "输入规模 n", "small");
-      V.text(g, 18, T + 8, "运行量", "small");
 
       for (const key of ["n", "nlogn", "n2", "exp"]) {
         const ps = pts(fs[key], f.n);
         const d = ps.map((p, i) => (i ? "L" : "M") + p[0].toFixed(1) + "," + p[1].toFixed(1)).join(" ");
         V.el("path", { d, fill: "none", class: "ln " + colors[key], "stroke-width": 2.2 }, g);
-        const last = ps[ps.length - 1];
-        V.text(g, Math.min(last[0] + 6, R + 4), Math.max(last[1] - 4, T + 8), names[key], "small " + colors[key], "start");
       }
 
       const x = L + (f.n / 64) * (R - L);
@@ -115,29 +111,25 @@
     ];
 
     function draw(g, f) {
-      const k = f.line - 1;
-      V.text(g, 16, 40, "n = 3 时的执行过程", "small", "start");
-      code.forEach((ln, idx) => {
-        const y = 66 + idx * 30;
-        if (idx === k) V.box(g, 10, y - 18, 330, 26, "", "hot");
-        V.text(g, 18, y, ln, "mono " + (idx === k ? "hot" : ""), "start");
-      });
+      V.text(g, 30, 36, "n = 3 时的执行过程", "small", "start");
+      V.text(g, 30, 58, "每格代表一次赋值，", "small", "start");
+      V.text(g, 30, 78, "代码和当前行见右侧。", "small", "start");
 
-      const x0 = 400, y0 = 60, cw = 64, ch = 44;
+      const x0 = 320, y0 = 50, cw = 92, ch = 62;
       for (let i = 1; i <= N; i++) {
         for (let j = 1; j <= N; j++) {
           const idx = (i - 1) * N + (j - 1);
           const done = idx < f.filled;
           const cur = f.line === 3 && i === f.i && j === f.j;
-          V.box(g, x0 + (j - 1) * cw, y0 + (i - 1) * ch, cw - 6, ch - 6,
+          V.box(g, x0 + (j - 1) * cw, y0 + (i - 1) * ch, cw - 8, ch - 8,
             done ? "✓" : "", cur ? "hot" : done ? "ok" : "");
         }
       }
-      V.text(g, x0 + 1.5 * cw, y0 - 12, "a[i][j]", "small");
+      V.text(g, x0 + 1.5 * cw, y0 - 14, "a[i][j]", "small");
 
-      V.box(g, 400, 208, 110, 34, "i = " + (f.i || "-"), f.line === 1 ? "hot" : "");
-      V.box(g, 520, 208, 110, 34, "j = " + (f.j || "-"), f.line === 2 ? "hot" : "");
-      V.box(g, 640, 208, 110, 34, "步数 " + f.steps, "acc");
+      V.box(g, 30, 210, 120, 34, "i = " + (f.i || "-"), f.line === 1 ? "hot" : "");
+      V.box(g, 165, 210, 120, 34, "j = " + (f.j || "-"), f.line === 2 ? "hot" : "");
+      V.box(g, 300, 210, 150, 34, "已执行 " + f.steps + " 步", "acc");
     }
 
     V.panel({

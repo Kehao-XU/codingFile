@@ -108,7 +108,7 @@
         if (x < X0 - 1 || x + CW > 700) continue;
         V.box(g, x, y + 44, CW - 3, 30, P[j], j === hotPat ? "hot" : "");
       }
-      V.text(g, 710, y + 6, "比较 " + cmp + " 次", "small", "start");
+      V.text(g, 686, y + 6, "比较 " + cmp + " 次", "small", "start");
     }
 
     function draw(g, f) {
@@ -168,7 +168,7 @@
     push(4, "j 到 m-1，构造结束");
 
     const W = 760, H = 250;
-    const CW = 84, X0 = 60;
+    const CW = 84, X0 = 86;
 
     function draw(g, f) {
       const rows = [

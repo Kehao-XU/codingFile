@@ -8,7 +8,7 @@
     const off = i - (Math.pow(2, d) - 1);
     const total = Math.pow(2, d);
     const span = 620 / total;
-    return [CX + (off - (total - 1) / 2) * span, 70 + d * 78];
+    return [CX + (off - (total - 1) / 2) * span, 62 + d * 78];
   }
 
   function drawHeap(g, arr, hot, sortedFrom) {
@@ -64,17 +64,17 @@
       push(12, `${temp} 落在位置 ${j}，堆序恢复`, [j], x, j, Math.floor((j - 1) / 2), temp);
     });
 
-    const W = 760, H = 400;
+    const W = 760, H = 420;
 
     function draw(g, f) {
       drawHeap(g, f.heap, f.hot);
 
       f.heap.forEach((v, i) => {
-        V.box(g, 40 + i * 44, 330, 38, 30, String(v), f.hot.includes(i) ? "hot" : "");
+        V.box(g, 40 + i * 44, 344, 38, 30, String(v), f.hot.includes(i) ? "hot" : "");
       });
-      V.text(g, 40, 322, "数组表示", "small", "start");
-      V.text(g, 40, 380, f.note, "small", "start");
-      V.text(g, 520, 380, `共 ${f.heap.length} 个元素`, "small", "start");
+      V.text(g, 40, 336, "数组表示", "small", "start");
+      V.text(g, 40, 400, f.note, "small", "start");
+      V.text(g, 520, 400, `共 ${f.heap.length} 个元素`, "small", "start");
     }
 
     V.panel({
@@ -151,16 +151,16 @@
       }
     }
 
-    const W = 760, H = 400;
+    const W = 760, H = 420;
 
     function draw(g, f) {
       drawHeap(g, f.heap.filter((v) => v !== null), f.hot, f.sortedFrom);
       f.heap.forEach((v, i) => {
-        V.box(g, 40 + i * 44, 330, 38, 30, v === null ? "" : String(v),
+        V.box(g, 40 + i * 44, 344, 38, 30, v === null ? "" : String(v),
           f.hot.includes(i) ? "hot" : v === null ? "dim" : "");
       });
-      V.text(g, 40, 322, "数组（灰掉的是已排好的部分）", "small", "start");
-      V.text(g, 40, 380, f.note, "small", "start");
+      V.text(g, 40, 336, "数组（灰掉的是已排好的部分）", "small", "start");
+      V.text(g, 40, 400, f.note, "small", "start");
     }
 
     V.panel({

@@ -22,7 +22,7 @@
     if (!nd) return;
     place(nd.l);
     nd.x = 52 + counter++ * 78;
-    nd.y = 70 + nd.depth * 78;
+    nd.y = 118 + nd.depth * 62;
     place(nd.r);
   })(root);
 
@@ -87,8 +87,8 @@
         V.circle(g, nd.x, nd.y, 19, k, k === f.root ? "hot" : "ok");
       }
 
-      V.text(g, 30, 330, f.note, "small", "start");
-      V.text(g, 30, 356, `已建 ${f.created.length} / 9 个结点`, "small", "start");
+      V.text(g, 30, 344, f.note, "small", "start");
+      V.text(g, 30, 368, `已建 ${f.created.length} / 9 个结点`, "small", "start");
     }
 
     V.panel({
@@ -155,8 +155,8 @@
         V.circle(g, nd.x, nd.y, 19, k, isCur ? "hot" : visited.has(k) ? "ok" : "");
       }
 
-      V.text(g, 30, 330, f.note, "small", "start");
-      V.text(g, 30, 356, "序列：" + f.out.join(" "), "mono", "start");
+      V.text(g, 30, 344, f.note, "small", "start");
+      V.text(g, 30, 368, "序列：" + f.out.join(" "), "mono", "start");
     }
 
     V.panel({

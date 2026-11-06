@@ -42,7 +42,7 @@
     last = 4;
     push("last 减一，删除完成", [], 14, "—");
 
-    const W = 760, H = 230, CW = 70, X0 = 30, Y0 = 70;
+    const W = 760, H = 270, CW = 70, X0 = 30, Y0 = 70;
 
     function draw(g, f) {
       V.text(g, X0, 36, "顺序表（连续内存）", "small", "start");

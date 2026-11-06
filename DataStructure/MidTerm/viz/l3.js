@@ -40,7 +40,7 @@
     headTo = prev;
     push("最后别忘了把 head->link 指向新的首结点（原来的尾）", 9);
 
-    const W = 760, H = 260;
+    const W = 760, H = 285;
     const CW = 86, X0 = 130, Y = 110;
 
     function draw(g, f) {
@@ -79,9 +79,13 @@
         V.arrow(g, x, Y - 26 - dy, x, Y - 6, col);
         V.text(g, x, Y - 34 - dy, nm, "small " + col);
       };
+      if (f.next === f.cur) {
+        mark(f.cur, "cur·next", "hot", 0);
+      } else {
+        mark(f.cur, "cur", "hot", 0);
+        mark(f.next, "next", "", 0);
+      }
       mark(f.prev, "prev", "acc", 18);
-      mark(f.cur, "cur", "hot", 0);
-      mark(f.next, "next", "", 0);
 
       V.text(g, X0 - 100, Y + 150, f.note, "small", "start");
     }
