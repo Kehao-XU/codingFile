@@ -136,7 +136,15 @@
     const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, class: "stage" });
     svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
     defs(svg);
-    wrap.appendChild(svg);
+
+    // 左边：执行现场；右边：代码 + 变量
+    const stagewrap = document.createElement("div");
+    stagewrap.className = "stagewrap";
+    const canvas = document.createElement("div");
+    canvas.className = "canvas";
+    canvas.appendChild(svg);
+    stagewrap.appendChild(canvas);
+    wrap.appendChild(stagewrap);
 
     // 调试视图：每列 = 标题 + 代码 + 变量
     const cols = normalizeCode(opts.code);
@@ -179,7 +187,7 @@
       dbg.appendChild(col);
       return { rows, tb };
     });
-    if (cols.length) wrap.appendChild(dbg);
+    if (cols.length) stagewrap.appendChild(dbg);
 
     const bar = document.createElement("div");
     bar.className = "bar";
