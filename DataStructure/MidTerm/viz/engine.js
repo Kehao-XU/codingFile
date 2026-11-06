@@ -20,7 +20,7 @@
   function box(g, x, y, w, h, text, cls) {
     const r = el("rect", { x, y, width: w, height: h, rx: 6, class: "bx " + (cls || "") }, g);
     if (text !== undefined && text !== null && text !== "") {
-      el("text", { x: x + w / 2, y: y + h / 2 + 5, class: "tx" }, g).textContent = text;
+      el("text", { x: x + w / 2, y: y + h / 2 + 5, class: "tx " + (cls || "") }, g).textContent = text;
     }
     return r;
   }
