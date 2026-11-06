@@ -12,16 +12,17 @@
   }
 
   function drawHeap(g, arr, hot, sortedFrom) {
+    const deadAt = (i) => sortedFrom !== undefined && i >= sortedFrom;
     for (let i = 1; i < arr.length; i++) {
       const p = Math.floor((i - 1) / 2);
       if (arr[i] === null) continue;
       const a = pos(p), b = pos(i);
-      V.line(g, a[0], a[1], b[0], b[1], "");
+      V.line(g, a[0], a[1], b[0], b[1], deadAt(i) || deadAt(p) ? "dim" : "");
     }
     arr.forEach((v, i) => {
       if (v === null) return;
       const [x, y] = pos(i);
-      const dead = sortedFrom !== undefined && i >= sortedFrom;
+      const dead = deadAt(i);
       V.circle(g, x, y, 20, String(v), hot && hot.includes(i) ? "hot" : dead ? "dim" : "");
     });
   }
@@ -110,7 +111,8 @@
 
     const push = (line, note, hot, extra) =>
       frames.push({
-        heap: heap.map((v, i) => (i < sortedFrom ? v : null)),
+        heap: heap.slice(),
+        sortedFrom,
         line, note, hot: hot || [],
         vars: Object.assign({ "已排好": heap.length - sortedFrom, "堆大小": sortedFrom }, extra || {}),
       });
@@ -128,8 +130,12 @@
       push(4, `堆顶 ${heap[end]} 换到末尾 a[${end}]，锁定一个元素`, [0, end], { "end": end });
       siftDown(0, end);
     }
-    sortedFrom = 0;
+    // 最后一帧：全部排好，不再有"灰掉"的部分，直接展示完整数组
+    sortedFrom = heap.length;
     push(3, "全部排好：升序", []);
+    const lastFrame = frames[frames.length - 1];
+    lastFrame.vars["已排好"] = heap.length;
+    lastFrame.vars["堆大小"] = 0;
 
     function siftDown(i, n) {
       let cmp = 0;
@@ -154,10 +160,10 @@
     const W = 760, H = 420;
 
     function draw(g, f) {
-      drawHeap(g, f.heap.filter((v) => v !== null), f.hot, f.sortedFrom);
+      drawHeap(g, f.heap, f.hot, f.sortedFrom);
       f.heap.forEach((v, i) => {
-        V.box(g, 40 + i * 44, 344, 38, 30, v === null ? "" : String(v),
-          f.hot.includes(i) ? "hot" : v === null ? "dim" : "");
+        V.box(g, 40 + i * 44, 344, 38, 30, String(v),
+          f.hot.includes(i) ? "hot" : i >= f.sortedFrom ? "dim" : "");
       });
       V.text(g, 40, 336, "数组（灰掉的是已排好的部分）", "small", "start");
       V.text(g, 40, 400, f.note, "small", "start");

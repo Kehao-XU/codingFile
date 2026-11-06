@@ -213,6 +213,7 @@ svg circle.nd.ok { fill: rgba(46, 139, 87, .12); stroke: var(--ok); }
 svg circle.nd.acc { fill: rgba(47, 111, 219, .10); stroke: var(--accent); }
 
 svg line.ln { stroke: var(--line); stroke-width: 1.4; }
+svg line.ln.dim { stroke-opacity: .28; }
 svg line.ln.acc { stroke: var(--accent); }
 svg line.ln.hot { stroke: var(--hot); }
 svg line.ln.ok { stroke: var(--ok); }
