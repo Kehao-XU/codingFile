@@ -22,7 +22,7 @@
 
 每个 lesson 下都是 `学案*.md` + `src/` + `solution/` + `output/` + `log/`：`src/` 是练习骨架（函数体只剩 `// TODO` + 任务描述），`solution/` 是参考答案，`output/` 放 `.exe`（已忽略），`log/` 放实测日志 `.txt`（进库）。
 
-另外两份横向材料：`MidTerm/期中总复习.md`（八讲汇总 + 30 条易错点 + 往年卷链接），`MidTerm/viz/`（16 个自包含 HTML 动画，`index.html` 是入口，双击即可看，无外部依赖）。
+另外两份横向材料：`MidTerm/期中总复习.md`（八讲汇总 + 30 条易错点 + 往年卷链接），`MidTerm/viz/`（16 个自包含 HTML 动画，`index.html` 是入口，双击即可看，无外部依赖；每个动画带代码行高亮和变量表，可单步）。
 
 工具：`tools/extract_pptx.py` 抽课件正文，用法见文末。
 

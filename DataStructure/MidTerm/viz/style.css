@@ -97,6 +97,68 @@ nav.top a:hover { color: var(--accent); }
   font-variant-numeric: tabular-nums;
 }
 
+/* 调试视图：代码 + 变量 */
+.dbg {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 10px;
+}
+.dbg .col {
+  flex: 1 1 300px;
+  min-width: 260px;
+}
+.dbg .ctitle {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+pre.code {
+  margin: 0;
+  max-height: 230px;
+  overflow: auto;
+  background: var(--box2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 6px 0;
+  font: 12px/1.6 Consolas, "Cascadia Mono", "SF Mono", monospace;
+}
+pre.code .cl {
+  display: flex;
+  padding: 0 10px 0 0;
+  white-space: pre;
+}
+pre.code .cl.on {
+  background: rgba(224, 90, 43, .14);
+  box-shadow: inset 2px 0 0 var(--hot);
+}
+pre.code .cl.on .ct { color: var(--fg); font-weight: 600; }
+pre.code .lnum {
+  flex: none;
+  width: 26px;
+  margin-right: 8px;
+  text-align: right;
+  color: var(--muted);
+  opacity: .65;
+  user-select: none;
+}
+
+table.vars {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 6px;
+  font: 12px Consolas, "Cascadia Mono", monospace;
+}
+table.vars td {
+  padding: 3px 6px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+table.vars td.k { color: var(--muted); width: 40%; }
+table.vars td.v { text-align: right; word-break: break-all; }
+table.vars tr.chg td.v { color: var(--hot); font-weight: 600; }
+
 svg text.tx { fill: var(--fg); font-size: 13px; font-family: inherit; }
 svg text.tx.small { font-size: 11px; fill: var(--muted); }
 svg text.tx.hot { fill: var(--hot); font-weight: 600; }
