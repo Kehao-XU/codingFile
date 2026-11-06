@@ -18,6 +18,12 @@ long long hanoiMoves = 0;
 //       自测：n 个盘子的移动次数应为 2^n - 1，递归调用次数应为 2^(n+1) - 1。
 void hanoi(int n, char from, char via, char to) {
     // TODO
+    ++hanoiCalls;
+    if (n == 0)
+        return;
+    hanoi(n - 1, from, to, via);
+    ++hanoiMoves;
+    hanoi(n - 1, via, from, to);
 }
 
 // ---------------- Fibonacci ----------------
@@ -27,49 +33,83 @@ long long fibCalls = 0;
 //       自测：n = 30 时递归调用次数应达到 2,692,537 次，这就是重复计算的代价。
 long long fibRec(int n) {
     // TODO
+    ++fibCalls;
+    if (n <= 1)
+        return n;
+    return fibRec(n - 1) + fibRec(n - 2);
 }
 
-// TODO: 迭代求 Fib，避免重复计算。steps 记录循环体执行了多少次（n <= 1 时为 0）。
+// TODO: 迭代求 Fib，避免重复计算。steps 记录循环体执行了多少次（n <= 1 时为
+// 0）。
 //       自测：Fib(30) 与递归版结果相同，但 steps 只有 29。
 long long fibIter(int n, long long &steps) {
     // TODO
+    steps = 0;
+    if (n <= 1)
+        return n;
+    int a = 0, b = 1;
+    for (int i = 2; i <= n; ++i) {
+        long long c = a + b;
+        a = b; // 随着i的增大，前一轮循环中的fib(n)变成了现在的fib(n-1)，在下一轮循环中变成fib(n-2)
+        b = c; // 新算出来的fib(n)，在下一轮循环中会成为fib(n-1)
+        ++steps;
+    }
+    return b;
 }
 
 // ---------------- n 皇后 ----------------
 int n, solutions;
-int col[16], md[32], sd[32];            // 列、主对角线、次对角线占用标记
+int col[16], md[32], sd[32]; // 列、主对角线、次对角线占用标记
 
 // TODO: 逐行放置皇后。行号 row 从 0 到 n-1，放满 n 行时 ++solutions 并返回。
 //       每一列 j 都要检查：同列 col[j]、主对角线 md[n + row - j - 1]、
-//       次对角线 sd[row + j] 是否已被占用；能放就置位、递归下一行、再复位（回溯）。
-//       自测：n = 8 时应有 92 个解。
+//       次对角线 sd[row + j]
+//       是否已被占用；能放就置位、递归下一行、再复位（回溯）。 自测：n = 8
+//       时应有 92 个解。
 void queen(int row) {
     // TODO
+    if (row == n) {
+        ++solutions;
+        return;
+    }
+    for (int j = 0; j < n; ++j) {
+        int m = n + row - j - 1;
+        int s = row + j;
+        if (col[j] || md[m] || sd[s])
+            continue;
+        col[j] = md[m] = sd[s] = 1;
+        queen(row + 1);
+        col[j] = md[m] = sd[s] = 0;
+    }
 }
 
 int solveQueens(int size) {
     n = size;
     solutions = 0;
-    for (int i = 0; i < 16; ++i) col[i] = 0;
-    for (int i = 0; i < 32; ++i) md[i] = sd[i] = 0;
+    for (int i = 0; i < 16; ++i)
+        col[i] = 0;
+    for (int i = 0; i < 32; ++i)
+        md[i] = sd[i] = 0;
     queen(0);
     return solutions;
 }
 
 int main() {
     std::printf("=== 任务 1：Hanoi 的递归规模 ===\n");
-    std::printf("%4s %14s %14s %14s %14s\n", "n", "实际移动", "2^n-1", "递归调用", "2^(n+1)-1");
+    std::printf("%4s %14s %14s %14s %14s\n", "n", "实际移动", "2^n-1",
+                "递归调用", "2^(n+1)-1");
     for (int k = 1; k <= 20; ++k) {
         hanoiCalls = hanoiMoves = 0;
         hanoi(k, 'A', 'B', 'C');
         long long expectMoves = (1LL << k) - 1;
         long long expectCalls = (1LL << (k + 1)) - 1;
-        std::printf("%4d %14lld %14lld %14lld %14lld\n",
-                    k, hanoiMoves, expectMoves, hanoiCalls, expectCalls);
+        std::printf("%4d %14lld %14lld %14lld %14lld\n", k, hanoiMoves,
+                    expectMoves, hanoiCalls, expectCalls);
     }
 
     std::printf("\n=== 任务 2：Fib 的重复计算 ===\n");
-    std::printf("%4s %14s %18s %14s\n", "n", "Fib(n)", "递归调用次数", "迭代循环次数");
+    std::printf("%4s %14s %18s %14s\n", "n", "Fib(n)", "递归调用次数",
+                "迭代循环次数");
     const int ns[] = {10, 15, 20, 25, 30};
     for (int i = 0; i < 5; ++i) {
         fibCalls = 0;
