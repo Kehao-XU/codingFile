@@ -1,2 +1,28 @@
 Log_Files/
 DataStructure/**/output/
+
+# 编译产物（各机器本地生成，不入库）
+*.exe
+*.o
+*.obj
+*.out
+*.a
+*.so
+*.dll
+*.dylib
+*.pdb
+*.ilk
+*.gch
+*.class
+
+# Python 缓存与虚拟环境
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# 编辑器/IDE 本机配置（含本机绝对路径，跨设备必冲突）
+.vscode/
+
+# 工具生成物
+code-line-stats-*.xlsx
