@@ -1,7 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 int main(){
-    FILE *fp=fopen("../test.txt","r");
+    FILE *fp=fopen("data/test.txt","r");
     if(fp==NULL){
         printf("File open failed!\n");
         return 0;

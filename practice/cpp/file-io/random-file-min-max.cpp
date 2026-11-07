@@ -3,7 +3,7 @@
 #include<stdlib.h>
 int main(){
     srand(time(NULL));
-    FILE *fp=fopen("../testT6.txt","w+");  // 使用w+模式，允许同时读写
+    FILE *fp=fopen("testT6.txt","w+");  // 使锟斤拷w+模式锟斤拷锟斤拷锟斤拷同时锟斤拷写
     if(!fp){
         printf("File open failed!\n");
         return 0;

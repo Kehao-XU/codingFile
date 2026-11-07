@@ -650,7 +650,7 @@ main()
 ## 6. 目录结构与构建
 
 ```
-PJ1/
+zuma/
 ├─ ARCHITECTURE.md            # 本文档
 ├─ README.md                  # 运行说明（构建 / 运行 / 命令 / 规则 / 计分）
 ├─ Project 1 - Zuma.md        # 需求
@@ -914,7 +914,7 @@ g++ -std=c++17 -Wall -Wextra -O2 -Isrc src/core/*.cpp src/cli/*.cpp src/util/*.c
 ### 12.4 复现验证
 
 ```bash
-cd PJ1
+cd zuma
 powershell -ExecutionPolicy Bypass -File .\build.ps1   # 编译游戏与测试
 .\build\zuma_tests.exe                                # 391 项检查应全部通过
 .\build\zuma.exe                                      # 直接游玩（选 1 = 演示关，默认每帧清屏重绘）

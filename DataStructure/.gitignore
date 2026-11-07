@@ -1,9 +1,10 @@
 # 由 tools/extract_pptx.py 生成的课件抽取文本，随时可重建
 material/
 
-# 课件原件（3.7 MB 二进制，不进库）
+# 课件原件（二进制，不进库）
 课件/
 
-# 编译产物
+# 编译/构建产物
 *.exe
-PJ1/build/
+**/build/
+**/output/

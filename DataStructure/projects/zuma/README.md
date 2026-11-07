@@ -11,7 +11,7 @@
 ## 1. 目录结构
 
 ```
-PJ1/
+zuma/
 ├─ ARCHITECTURE.md      架构设计说明书
 ├─ README.md            本文件（运行说明）
 ├─ CMakeLists.txt       CMake 构建（可选）
@@ -31,7 +31,7 @@ PJ1/
 ### 方式 A：MSYS2 / MinGW-w64 / Linux（g++）
 
 ```bash
-# 在 PJ1 目录下
+# 在 zuma 目录下
 g++ -std=c++17 -Wall -Wextra -O2 -Isrc \
     src/main.cpp src/core/*.cpp src/cli/*.cpp src/util/*.cpp -o zuma.exe
 

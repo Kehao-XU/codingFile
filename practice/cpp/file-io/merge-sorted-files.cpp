@@ -1,12 +1,12 @@
 #include <stdio.h>
 
 int main() {
-    FILE *fp1 = fopen("../file1.txt", "r");
-    FILE *fp2 = fopen("../file2.txt", "r");
-    FILE *fout = fopen("../merged.txt", "w");
+    FILE *fp1 = fopen("data/file1.txt", "r");
+    FILE *fp2 = fopen("data/file2.txt", "r");
+    FILE *fout = fopen("merged.txt", "w");
 
     if (fp1 == NULL || fp2 == NULL || fout == NULL) {
-        printf("ÎÄ¼þ´ò¿ªÊ§°Ü£¡\n");
+        printf("ï¿½Ä¼ï¿½ï¿½ï¿½Ê§ï¿½Ü£ï¿½\n");
         return 1;
     }
 
@@ -56,6 +56,6 @@ int main() {
     fclose(fp2);
     fclose(fout);
 
-    printf("ºÏ²¢Íê³É£¡\n");
+    printf("ï¿½Ï²ï¿½ï¿½ï¿½É£ï¿½\n");
     return 0;
 }

@@ -1,0 +1,79 @@
+#include <iostream>
+#include <stack>
+#include <string>
+#include <vector>
+
+struct Node {
+    int data;
+    Node* next;
+};
+
+bool loopExist(Node *head) {
+    if (head == nullptr)
+        return false;
+
+    Node *slow = head, *fast = head;
+    while (fast->next != nullptr && fast->next->next != nullptr) {
+        slow = slow->next;
+        fast = fast->next->next;
+        if (slow == fast) return true;
+    }
+    return false;
+}
+
+bool bracketMatch(const char& left, const char& right) {
+    if (left == '(') return right == ')';
+    else if (left == '[') return right == ']';
+    else if (left == '{') return right == '}';
+    return false;
+}
+
+bool expressionBracketMatch(const std::string& expression) {
+    std::stack<const char> st;
+    for (const char c : expression) {
+        if (c == '(' || c == '[' || c == '{') {
+            st.push(c);
+        } else if (c == ')' || c == ']' || c == '}') {
+            if (st.empty())
+                return false;
+
+            const char x = st.top();
+            st.pop();
+            if (!bracketMatch(x, c)) return false;
+        }
+    }
+    return st.empty();
+}
+
+int n, solutions;
+int col[16], md[32], sd[32];
+
+void queen(int row) {
+    //TODO
+    if (row == n) {
+        ++solutions;
+        return;
+    }
+
+    for (int j = 0; j < n; ++j) {
+        int m = n + row - j - 1;
+        int s = row + j;
+        if (col[j] || md[m] || sd[s])
+            continue;
+        col[j] = md[m] = sd[s] = 1;
+        queen(row + 1);
+        col[j] = md[m] = sd[s] = 0;
+    }
+}
+
+int solveQueens(int size) {
+    //TODO
+    n = size;
+    solutions = 0;
+    for (int i = 0; i < 16; ++i)
+        col[i] = 0;
+    for (int i = 0; i < 32; ++i)
+        md[i] = sd[i] = 0;
+    queen(0);
+    return solutions;
+}

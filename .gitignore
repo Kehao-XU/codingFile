@@ -1,6 +1,3 @@
-Log_Files/
-DataStructure/**/output/
-
 # 编译产物（各机器本地生成，不入库）
 *.exe
 *.o
@@ -15,6 +12,15 @@ DataStructure/**/output/
 *.gch
 *.class
 
+# 构建/运行产物
+**/output/
+**/build/
+Log_Files/
+
+# 文件 I/O 练习的生成物
+practice/cpp/file-io/merged.txt
+practice/cpp/file-io/testT6.txt
+
 # Python 缓存与虚拟环境
 __pycache__/
 *.py[cod]
@@ -23,6 +29,7 @@ venv/
 
 # 编辑器/IDE 本机配置（含本机绝对路径，跨设备必冲突）
 .vscode/
+.idea/
 
 # 工具生成物
 code-line-stats-*.xlsx

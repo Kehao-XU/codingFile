@@ -22,9 +22,9 @@
 
 每个 lesson 下都是 `学案*.md` + `src/` + `solution/` + `output/` + `log/`：`src/` 是练习骨架（函数体只剩 `// TODO` + 任务描述），`solution/` 是参考答案，`output/` 放 `.exe`（已忽略），`log/` 放实测日志 `.txt`（进库）。
 
-另外两份横向材料：`MidTerm/期中总复习.md`（八讲汇总 + 30 条易错点 + 往年卷链接），`MidTerm/viz/`（16 个自包含 HTML 动画，`index.html` 是入口，双击即可看，无外部依赖；左边图形、右边代码行高亮和变量表，可单步）。
+另外两份横向材料：`MidTerm/期中总复习.md`（八讲汇总 + 30 条易错点 + 往年卷链接），`MidTerm/viz/`（22 个自包含 HTML 动画，`index.html` 是入口，双击即可看，无外部依赖；左边图形、右边代码行高亮和变量表，可单步）。
 
-改动动画后先跑 `node tools/viz_check.js`：它把 446 帧全画一遍，检查元素越界、文字重叠、文字压图形。只能抓几何问题，抓不到字形细节。
+改动动画后先跑 `node tools/viz_check.js`：它把全部帧画一遍，检查元素越界、文字重叠、文字压图形。只能抓几何问题，抓不到字形细节。
 
 工具：`tools/extract_pptx.py` 抽课件正文，用法见文末。
 
@@ -72,7 +72,7 @@ python ... --dir <path>          # 指定项目目录（默认当前目录）
 ## 待办
 
 - 第 9-11 讲（搜索与索引、图、排序）等课件；拿到后按同样的结构续写 `MidTerm/Lesson9/` 起。
-- `MidTerm/` 还没提交（`.exe` 已由 `.gitignore` 排除）。
+- `MidTerm/` 已提交；后续改动见 git log。
 - 若要用新版上下文：把本文件的路径直接丢给新会话，说"读 notes.md，接着做 X"。
 
 ## 附：抽取课件文本（`tools/extract_pptx.py`）
