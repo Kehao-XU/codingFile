@@ -195,4 +195,195 @@
       caption: (f) => `${f.name}　已访问 ${f.out.length} / 9`,
     });
   })();
+
+  // ---------- 动画 3：树 -> 二叉树 ----------
+  (function treeToBinaryAnim() {
+    const T = {
+      A: { x: 150, y: 55, kids: ["B", "C", "D"] },
+      B: { x: 75, y: 135, kids: ["E", "F"] },
+      C: { x: 150, y: 135, kids: [] },
+      D: { x: 225, y: 135, kids: ["G"] },
+      E: { x: 45, y: 215, kids: [] },
+      F: { x: 105, y: 215, kids: [] },
+      G: { x: 225, y: 215, kids: [] },
+    };
+    const B = {
+      A: { x: 535, y: 45 },
+      B: { x: 470, y: 115 },
+      E: { x: 405, y: 185 },
+      F: { x: 485, y: 185 },
+      C: { x: 540, y: 185 },
+      D: { x: 615, y: 255 },
+      G: { x: 575, y: 325 },
+    };
+    const steps = [
+      { from: "A", to: "B", side: "left", why: "A 的第一个孩子 B -> A.left" },
+      { from: "B", to: "E", side: "left", why: "B 的第一个孩子 E -> B.left" },
+      { from: "B", to: "C", side: "right", why: "B 的下一个兄弟 C -> B.right" },
+      { from: "E", to: "F", side: "right", why: "E 的下一个兄弟 F -> E.right" },
+      { from: "C", to: "D", side: "right", why: "C 的下一个兄弟 D -> C.right" },
+      { from: "D", to: "G", side: "left", why: "D 的第一个孩子 G -> D.left" },
+    ];
+
+    const frames = [];
+    frames.push({
+      n: 0, note: "先看左边的树：每个结点有 firstChild 和 nextSibling 两个指针。",
+      line: 1, vars: { "已建立边": 0 },
+    });
+    steps.forEach((s, i) => {
+      frames.push({
+        n: i + 1, hot: [s.from, s.to], note: s.why,
+        line: s.side === "left" ? 4 : 5,
+        vars: {
+          "当前结点": s.from,
+          "关系": s.side === "left" ? "第一个孩子 -> 左子女" : "下一个兄弟 -> 右子女",
+          "已建立边": i + 1,
+        },
+      });
+    });
+
+    const W = 760, H = 390;
+
+    function draw(g, f) {
+      V.text(g, 150, 24, "树（firstChild / nextSibling）", "small");
+      for (const p in T)
+        for (const c of T[p].kids) V.line(g, T[p].x, T[p].y, T[c].x, T[c].y, "");
+      for (const k in T) {
+        const nd = T[k];
+        const hot = f.hot && f.hot.includes(k);
+        V.circle(g, nd.x, nd.y, 18, k, hot ? "hot" : "");
+      }
+
+      V.text(g, 535, 24, "二叉树（left / right）", "small");
+      const lit = new Set();
+      for (let i = 0; i < f.n; i++) {
+        lit.add(steps[i].from);
+        lit.add(steps[i].to);
+      }
+      for (let i = 0; i < f.n; i++) {
+        const s = steps[i];
+        const a = B[s.from], b = B[s.to];
+        V.line(g, a.x, a.y, b.x, b.y, s.side === "left" ? "acc" : "ok");
+      }
+      for (const k in B) {
+        if (!lit.has(k)) continue;
+        V.circle(g, B[k].x, B[k].y, 18, k, f.hot && f.hot.includes(k) ? "hot" : "");
+      }
+
+      V.text(g, 40, 310, "左孩子管「往下」，右孩子管「往右」；根 A 没有兄弟，所以没有右子树。", "small", "start");
+      V.text(g, 40, 338, f.note, "small", "start");
+      V.text(g, 40, 366, `已建立 ${f.n} / 6 条转换边`, "small", "start");
+    }
+
+    V.panel({
+      host: "#a3",
+      title: "树 -> 二叉树：左孩子-右兄弟",
+      note: "每个结点只保留「第一个孩子」和「下一个兄弟」：前者变左子女，后者变右子女。",
+      width: W, height: H, frames, draw, interval: 900,
+      code: [
+        "BinNode *treeToBinary(TreeNode *p) {",
+        "    if (!p) return NULL;",
+        "    BinNode *q = new BinNode(p->data);",
+        "    q->left  = treeToBinary(p->firstChild);",
+        "    q->right = treeToBinary(p->nextSibling);",
+        "    return q;",
+        "}",
+      ],
+      caption: (f) => f.note,
+    });
+  })();
+
+  // ---------- 动画 4：森林 -> 二叉树 ----------
+  (function forestToBinaryAnim() {
+    const trees = [
+      { nodes: { A: { x: 90, y: 60 }, B: { x: 55, y: 130 }, C: { x: 125, y: 130 } }, edges: [["A", "B"], ["A", "C"]] },
+      { nodes: { D: { x: 370, y: 60 }, E: { x: 370, y: 130 } }, edges: [["D", "E"]] },
+      { nodes: { F: { x: 630, y: 60 }, G: { x: 590, y: 130 }, H: { x: 670, y: 130 } }, edges: [["F", "G"], ["F", "H"]] },
+    ];
+    const B = {
+      A: { x: 360, y: 205 }, B: { x: 240, y: 275 }, C: { x: 320, y: 345 },
+      D: { x: 480, y: 275 }, E: { x: 400, y: 345 }, F: { x: 560, y: 345 },
+      G: { x: 510, y: 415 }, H: { x: 590, y: 415 },
+    };
+    const steps = [
+      { edges: [["A", "B", "left"], ["B", "C", "right"]], note: "T1：A 的第一个孩子 B 变左子女；B 的下一个兄弟 C 变右子女。" },
+      { edges: [["D", "E", "left"]], note: "T2：D 的第一个孩子 E 变左子女。" },
+      { edges: [["F", "G", "left"], ["G", "H", "right"]], note: "T3：F 的第一个孩子 G 变左子女；G 的下一个兄弟 H 变右子女。" },
+      { edges: [["A", "D", "right"]], note: "串森林：第 2 棵树的根 D 作为 A 的右子女。" },
+      { edges: [["D", "F", "right"]], note: "第 3 棵树的根 F 作为 D 的右子女；根的右链就是各棵树的根。" },
+    ];
+
+    const frames = [];
+    let revealed = [];
+    frames.push({
+      n: 0, revealed: [], note: "森林 = 三棵互不相交的树。先各自转换，再把根串起来。",
+      line: 9, vars: { "已转换": "0 / 3 棵" },
+    });
+    steps.forEach((s, i) => {
+      revealed = revealed.concat(s.edges);
+      frames.push({
+        n: i + 1, revealed: revealed.slice(), hot: s.edges.map((e) => [e[0], e[1]]),
+        note: s.note, line: i < 3 ? 3 : 11,
+        vars: {
+          "已转换": i < 3 ? `${i + 1} / 3 棵` : "3 / 3 棵",
+          "森林先根": "A B C D E F G H",
+          "森林后根": "B C A E D G H F",
+        },
+      });
+    });
+
+    const W = 760, H = 490;
+
+    function draw(g, f) {
+      V.text(g, 40, 24, "森林", "small", "start");
+      trees.forEach((t, ti) => {
+        for (const [a, b] of t.edges)
+          V.line(g, t.nodes[a].x, t.nodes[a].y, t.nodes[b].x, t.nodes[b].y, "");
+        for (const k in t.nodes) V.circle(g, t.nodes[k].x, t.nodes[k].y, 16, k, "");
+        V.text(g, t.nodes[Object.keys(t.nodes)[0]].x, 168, `T${ti + 1}`, "small");
+      });
+
+      V.text(g, 360, 185, "二叉树", "small", "start");
+      const lit = new Set();
+      (f.revealed || []).forEach(([a, b]) => { lit.add(a); lit.add(b); });
+      (f.revealed || []).forEach(([a, b, side]) => {
+        V.line(g, B[a].x, B[a].y, B[b].x, B[b].y, side === "left" ? "acc" : "ok");
+      });
+      const hot = new Set();
+      (f.hot || []).forEach(([a, b]) => { hot.add(a); hot.add(b); });
+      for (const k in B) {
+        if (!lit.has(k)) continue;
+        V.circle(g, B[k].x, B[k].y, 17, k, hot.has(k) ? "hot" : "");
+      }
+
+      V.text(g, 40, 455, "森林先根 = 二叉树前序：A B C D E F G H", "small", "start");
+      V.text(g, 40, 477, "森林后根 = 二叉树中序：B C A E D G H F", "small", "start");
+    }
+
+    V.panel({
+      host: "#a4",
+      title: "森林 -> 二叉树：把各棵树的根串成右链",
+      note: "先各自用「左孩子-右兄弟」转换，再把第 2、3… 棵树的根依次挂到前一根的右指针上。",
+      width: W, height: H, frames, draw, interval: 1000,
+      code: [
+        "BinNode *treeToBinary(TreeNode *p) {",
+        "    if (!p) return NULL;",
+        "    BinNode *q = new BinNode(p->data);",
+        "    q->left  = treeToBinary(p->firstChild);",
+        "    q->right = treeToBinary(p->nextSibling);",
+        "    return q;",
+        "}",
+        "",
+        "BinNode *forestToBinary(TreeNode **r, int n) {",
+        "    BinNode *first = treeToBinary(r[0]), *cur = first;",
+        "    for (int i = 1; i < n; ++i) {",
+        "        cur->right = treeToBinary(r[i]);",
+        "        cur = cur->right;",
+        "    }",
+        "    return first;",
+        "}",
+      ],
+      caption: (f) => f.note,
+    });
+  })();
 })();

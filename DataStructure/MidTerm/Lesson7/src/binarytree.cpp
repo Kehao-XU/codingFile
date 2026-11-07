@@ -27,15 +27,15 @@ Node *buildFromPreIn(const char *vlr, const char *lvr, int n) {
         return nullptr;
 
     char root_c = *vlr;
-    Node root(root_c);
 
-    size_t k = 0;
+    int k = 0;
     while (lvr[k] != root_c)
         ++k;
 
-    root.left = buildFromPreIn(vlr + 1, lvr, k);
-    root.right = buildFromPreIn(vlr + k + 1, lvr + k + 1, n - k - 1);
-    return &root;
+    Node *root = new Node(root_c);
+    root->left = buildFromPreIn(vlr + 1, lvr, k);
+    root->right = buildFromPreIn(vlr + k + 1, lvr + k + 1, n - k - 1);
+    return root;
 }
 
 // ---------- 遍历 ----------
@@ -66,8 +66,8 @@ void postOrder(Node *p) {
     // TODO
     if (p == nullptr)
         return;
-    inOrder(p->left);
-    inOrder(p->right);
+    postOrder(p->left);
+    postOrder(p->right);
     std::cout << p->data;
     std::cout.flush();
 }
@@ -94,7 +94,7 @@ void levelOrder(Node *p) {
 //       空指针域 = 每个结点缺的左、右指针之和，满足 n 个结点的二叉树有 n+1 个。
 int size(Node *p) {
     // TODO
-    return p ? size(p->left) + size(p->right) : 0;
+    return p ? 1 + size(p->left) + size(p->right) : 0;
 }
 
 int height(Node *p) {
@@ -118,7 +118,7 @@ int emptyPointers(Node *p) {
     // TODO
     if (!p)
         return 0;
-    int self = (p->left ? 0 : 1) + (p->right ? 1 : 0);
+    int self = (p->left ? 0 : 1) + (p->right ? 0 : 1);
     return self + emptyPointers(p->left) + emptyPointers(p->right);
 }
 

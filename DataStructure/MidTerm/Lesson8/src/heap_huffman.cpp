@@ -14,7 +14,7 @@
 long long catalanRec(int n, long long *b) {
     // TODO
     b[0] = 1;
-    for (int i = 1; i < n; ++i) {
+    for (int i = 1; i <= n; ++i) {
         long long s = 0;
         for (int j = 0; j < i; ++j) {
             s += b[j] * b[i - j - 1];

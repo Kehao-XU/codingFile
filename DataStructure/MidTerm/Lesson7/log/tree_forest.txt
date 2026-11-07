@@ -1,0 +1,24 @@
+=== 任务 1：树 A(B(E,F),C,D(G)) ===
+树的前序：ABEFCDG
+树的后序：EFBCGDA
+树的层次：ABCDEFG
+
+=== 任务 2：树 -> 二叉树 ===
+二叉树前序：ABEFCDG
+二叉树中序：EFBCGDA
+对应关系：树前序 = 二叉树前序（ABEFCDG）
+          树后序 = 二叉树中序（EFBCGDA）
+
+=== 任务 3：森林 -> 二叉树 ===
+森林先根：ABCDEFGH
+森林后根：BCAEDGHF
+二叉树前序：ABCDEFGH
+二叉树中序：BCAEDGHF
+对应关系：森林先根 = 二叉树前序（ABCDEFGH）
+          森林后根 = 二叉树中序（BCAEDGHF）
+
+=== 任务 4：二叉树 -> 森林 ===
+T1: ABC
+T2: DE
+T3: FGH
+
