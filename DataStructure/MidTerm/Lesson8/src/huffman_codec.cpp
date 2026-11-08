@@ -21,7 +21,8 @@ struct HNode {
 void findTwoMin(const HNode *t, int k, int &m1, int &m2) {
     m1 = m2 = -1;
     for (int i = 0; i < k; ++i) {
-        if (t[i].parent != -1) continue;
+        if (t[i].parent != -1)
+            continue;
         if (m1 == -1 || t[i].weight < t[m1].weight) {
             m2 = m1;
             m1 = i;
@@ -37,7 +38,19 @@ void findTwoMin(const HNode *t, int k, int &m1, int &m2) {
 // TODO 1
 int buildHuffman(HNode *t, int n) {
     // TODO
-    return 0;
+    int wpl = 0;
+    for (int k = n; k < 2 * n - 1; ++k) {
+        int m1, m2;
+        findTwoMin(t, k, m1, m2);
+        t[k].weight = t[m1].weight + t[m2].weight;
+        t[k].left = m1;
+        t[k].right = m2;
+        t[m1].parent = t[m2].parent = k;
+        wpl += t[k].weight;
+        std::printf("  合并 %d 与 %d -> %d\n", t[m1].weight, t[m2].weight,
+                    t[k].weight);
+    }
+    return wpl;
 }
 
 // ---------- 任务 2：生成编码 ----------
@@ -46,6 +59,20 @@ int buildHuffman(HNode *t, int n) {
 // TODO 2
 void buildCodes(const HNode *t, int n, char code[][MAXN], int *len) {
     // TODO
+    for (int i = 0; i < n; ++i) {
+        char temp[MAXN];
+        int k = 0;
+        int p = i;
+        while (t[p].parent != -1) {
+            int par = t[p].parent;
+            temp[k++] = (t[par].left == p) ? '0' : '1';
+            p = par;
+        }
+        for (int j = 0; j < k; ++j)
+            code[i][j] = temp[k - 1 - j];
+        code[i][k] = '\0';
+        len[i] = k;
+    }
 }
 
 // ---------- 任务 3：解码 ----------
@@ -53,6 +80,21 @@ void buildCodes(const HNode *t, int n, char code[][MAXN], int *len) {
 // TODO 3
 void decode(const HNode *t, int root, const char *bits, const char *ch) {
     // TODO
+    int p = root;
+    size_t i = 0;
+    while (bits[i]) {
+        if (bits[i] == '0') {
+            p = t[p].left;
+        } else {
+            p = t[p].right;
+        }
+
+        if (t[p].left == -1 && t[p].right == -1) {
+            std::printf("%c", ch[p]);
+            p = root; // 回到根，接着解下一个字符
+        }
+        ++i;
+    }
 }
 
 // ---------- 任务 4：前缀码校验 ----------
@@ -60,7 +102,17 @@ void decode(const HNode *t, int root, const char *bits, const char *ch) {
 // TODO 4
 bool isPrefixFree(char code[][MAXN], int n) {
     // TODO
-    return false;
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            if (i == j)
+                continue;
+            int li = (int)std::strlen(code[i]);
+            int lj = (int)std::strlen(code[j]);
+            if (li <= lj && std::strncmp(code[i], code[j], li) == 0)
+                return false;
+        }
+    }
+    return true;
 }
 
 int main() {
@@ -69,8 +121,10 @@ int main() {
     const int n = 8, total = 2 * n - 1;
 
     HNode t[MAXN];
-    for (int i = 0; i < n; ++i) t[i] = {w[i], -1, -1, -1};
-    for (int i = n; i < total; ++i) t[i] = {0, -1, -1, -1};
+    for (int i = 0; i < n; ++i)
+        t[i] = {w[i], -1, -1, -1};
+    for (int i = n; i < total; ++i)
+        t[i] = {0, -1, -1, -1};
 
     // 任务 1
     std::printf("=== 任务 1：构造霍夫曼树 ===\n");
@@ -90,7 +144,8 @@ int main() {
     // 任务 3
     std::printf("=== 任务 3：WPL ===\n");
     int sumWL = 0;
-    for (int i = 0; i < n; ++i) sumWL += w[i] * len[i];
+    for (int i = 0; i < n; ++i)
+        sumWL += w[i] * len[i];
     std::printf("内部结点权值和 = %d，Σ 权值×深度 = %d\n\n", wpl, sumWL);
 
     // 任务 4：编码 + 解码

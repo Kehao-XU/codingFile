@@ -57,14 +57,16 @@ void inThread(ThreadNode *p, ThreadNode *&pre) {
 // TODO 2
 ThreadNode *first(ThreadNode *p) {
     // TODO
-    return nullptr;
+    while (p && !p->ltag && p->left) p = p->left;
+    return p;
 }
 
 // 中序最后一个结点：从根沿右链一直走，直到 rtag == 1。
 // TODO 3
 ThreadNode *last(ThreadNode *p) {
     // TODO
-    return nullptr;
+    while (p && !p->rtag && p->right) p = p->right;
+    return p;
 }
 
 // 后继：rtag == 1 直接取 right；否则是右子树的中序第一个结点。
@@ -85,6 +87,7 @@ ThreadNode *prev(ThreadNode *p) {
 // TODO 6
 void inOrderThread(ThreadNode *root) {
     // TODO
+    for (ThreadNode *p = first(root); p; p = next(p)) ;
 }
 
 // ---------- 任务 4：统计线索个数 ----------
@@ -93,7 +96,12 @@ void inOrderThread(ThreadNode *root) {
 // TODO 7
 int countThreads(ThreadNode *p) {
     // TODO
-    return 0;
+    if (!p) return 0;
+    int count = 0;
+    if (p->left && !p->ltag) count += countThreads(p->left);
+    count += p->ltag + p->rtag;
+    if (p->right && !p->rtag) count +=  countThreads(p->right);
+    return count;
 }
 
 // ---------- 辅助：递归遍历（未线索化时用于核对） ----------

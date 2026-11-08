@@ -12,6 +12,16 @@
 // TODO 1：最小堆的向上调整。把 a[j] 暂存，比父小就把父往下挪。
 void siftUpMin(int *a, int j) {
     // TODO
+    if (j == 0) return;
+
+    int temp = a[j];
+    int cur = j, prev = (j - 1) / 2;
+    while (cur > 0 && a[prev] > temp) {
+        a[cur] = a[prev];
+        cur = prev;
+        prev = (prev - 1) / 2;
+    }
+    a[cur] = temp;
 }
 
 // TODO 2：最小堆的向下调整。每轮选较小的子女，比它大就上移。
